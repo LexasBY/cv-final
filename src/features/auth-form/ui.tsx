@@ -49,13 +49,30 @@ export const AuthForm = ({ type }: AuthFormProps) => {
 
     try {
       let response;
+
       if (type === "login") {
         response = await loginMutation({ variables: { auth: data } });
+
+        if (response?.data?.login?.access_token) {
+          localStorage.setItem(
+            "access_token",
+            response.data.login.access_token
+          );
+          localStorage.setItem("userId", response.data.login.user.id);
+          navigate(`/users/${response.data.login.user.id}`);
+        }
       } else {
         response = await registerMutation({ variables: { auth: data } });
-      }
 
-      console.log("Response:", response);
+        if (response?.data?.signup?.access_token) {
+          localStorage.setItem(
+            "access_token",
+            response.data.signup.access_token
+          );
+          localStorage.setItem("userId", response.data.signup.user.id);
+          navigate(`/users/${response.data.signup.user.id}`);
+        }
+      }
     } catch (error) {
       console.error("GraphQL Error:", error);
 
