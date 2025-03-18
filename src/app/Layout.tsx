@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
-import Sidebar from "../widgets/sidebar/Sidebar";
+import Sidebar from "../features/Sidebar";
 
 const Layout = () => {
   return (

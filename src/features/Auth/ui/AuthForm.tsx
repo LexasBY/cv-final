@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import {
   TextField,
   Button,
@@ -12,77 +11,33 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useLogin, useRegister } from "./api";
+import { useAuthForm } from "../model/useAuthForm";
+import { authSchema } from "../model/validation";
 
 interface AuthFormProps {
   type: "login" | "register";
 }
 
-const schema = yup.object({
-  email: yup.string().email("Invalid email").required("Email is required"),
-  password: yup
-    .string()
-    .min(5, "Password must be at least 5 characters")
-    .required("Password is required"),
-});
+interface AuthFormData {
+  email: string;
+  password: string;
+}
 
 export const AuthForm = ({ type }: AuthFormProps) => {
   const navigate = useNavigate();
+  const { onSubmit, serverError } = useAuthForm(type);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(schema) });
-
-  const [loginMutation] = useLogin();
-  const [registerMutation] = useRegister();
+  } = useForm<AuthFormData>({
+    resolver: yupResolver(authSchema),
+  });
 
   const [showPassword, setShowPassword] = useState(false);
-  const [serverError, setServerError] = useState<string | null>(null);
 
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
-
-  const onSubmit = async (data: { email: string; password: string }) => {
-    console.log("Sending data:", data);
-    setServerError(null);
-
-    try {
-      let response;
-
-      if (type === "login") {
-        response = await loginMutation({ variables: { auth: data } });
-
-        if (response?.data?.login?.access_token) {
-          localStorage.setItem(
-            "access_token",
-            response.data.login.access_token
-          );
-          localStorage.setItem("userId", response.data.login.user.id);
-          navigate(`/users/${response.data.login.user.id}`);
-        }
-      } else {
-        response = await registerMutation({ variables: { auth: data } });
-
-        if (response?.data?.signup?.access_token) {
-          localStorage.setItem(
-            "access_token",
-            response.data.signup.access_token
-          );
-          localStorage.setItem("userId", response.data.signup.user.id);
-          navigate(`/users/${response.data.signup.user.id}`);
-        }
-      }
-    } catch (error) {
-      console.error("GraphQL Error:", error);
-
-      if (error instanceof Error) {
-        setServerError(error.message);
-      } else {
-        setServerError("An unknown error occurred");
-      }
-    }
-  };
 
   return (
     <Box
