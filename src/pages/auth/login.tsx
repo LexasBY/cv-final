@@ -1,6 +1,6 @@
 import { Box, Container } from "@mui/material";
-import { AuthHeader } from "../../widgets/auth-header/ui";
-import { AuthForm } from "../../features/auth-form/ui";
+import { AuthHeader } from "../../features/Auth/ui/AuthHeader";
+import { AuthForm } from "../../features/Auth/ui/AuthForm";
 
 const LoginPage = () => (
   <Container

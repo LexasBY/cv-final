@@ -1,8 +1,23 @@
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+//
 
-const client = new ApolloClient({
+import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+
+const httpLink = createHttpLink({
   uri: "https://cv-project-js.inno.ws/api/graphql",
-  cache: new InMemoryCache(),
 });
 
-export { client, ApolloProvider };
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem("access_token");
+  return {
+    headers: {
+      ...headers,
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+  };
+});
+
+export const client = new ApolloClient({
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache(),
+});
