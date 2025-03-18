@@ -33,8 +33,16 @@ export const NavigationMenu = ({ isCollapsed }: NavigationMenuProps) => {
           to={item.path}
           sx={{
             px: 1.5,
-            minHeight: 48,
+            mb: 2,
+            width: "100%",
+            minWidth: isCollapsed ? 70 : 300,
             color: "rgba(255,255,255,0.8)",
+            borderRadius: "0 24px 24px 0", // Закругление справа в любом состоянии
+            overflow: "visible", // Чтобы закругление не пряталось
+            marginRight: isCollapsed ? -10 : 0, // Смещаем немного влево, чтобы было видно
+
+            transition:
+              "background-color 0.3s ease, color 0.3s ease, border-radius 0.3s ease, margin 0.3s ease",
 
             "&:hover": {
               backgroundColor: "rgba(255,255,255,0.05)",
@@ -43,7 +51,6 @@ export const NavigationMenu = ({ isCollapsed }: NavigationMenuProps) => {
             "&.active": {
               backgroundColor: "rgba(255,255,255,0.1)",
               color: "#fff",
-
               borderRadius: "0 24px 24px 0",
             },
           }}

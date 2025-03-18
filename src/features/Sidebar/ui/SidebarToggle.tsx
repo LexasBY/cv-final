@@ -12,6 +12,11 @@ export const SidebarToggle = ({ isCollapsed, toggle }: SidebarToggleProps) => {
       onClick={toggle}
       sx={{
         color: "white",
+        width: 40,
+        height: 40,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         transition: "transform 0.3s ease-in-out",
         transform: isCollapsed ? "rotate(180deg)" : "rotate(0deg)",
       }}

@@ -15,8 +15,7 @@ export const Sidebar = () => {
     <Box
       component="aside"
       sx={{
-        width: isCollapsed ? 70 : 240,
-        backgroundColor: "rgb(45, 45, 45)",
+        width: isCollapsed ? 70 : 300,
         minHeight: "100vh",
         padding: "32px 0 0 0",
         transition: "width 0.3s ease-in-out",
@@ -37,7 +36,15 @@ export const Sidebar = () => {
             userId={userId}
             isCollapsed={isCollapsed}
           />
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              mt: 2,
+              pl: 1.5,
+            }}
+          >
             <SidebarToggle isCollapsed={isCollapsed} toggle={toggleSidebar} />
           </Box>
         </>

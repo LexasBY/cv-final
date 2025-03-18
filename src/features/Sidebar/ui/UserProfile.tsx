@@ -40,7 +40,6 @@ export const UserProfile = ({
           width: "100%",
           position: "relative",
           minHeight: 48,
-          // Смещаем левее аналогично
           px: 1.5,
         }}
       >
