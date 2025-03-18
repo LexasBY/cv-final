@@ -38,21 +38,33 @@ export const UserProfile = ({
           display: "flex",
           alignItems: "center",
           width: "100%",
-          paddingLeft: isCollapsed ? "12px" : "16px",
-          transition: "padding 0.3s ease-in-out",
           position: "relative",
+          minHeight: 48,
+          // Смещаем левее аналогично
+          px: 1.5,
         }}
       >
         <Avatar
           onClick={handleAvatarClick}
-          sx={{ cursor: "pointer", bgcolor: "red", width: 40, height: 40 }}
+          sx={{
+            cursor: "pointer",
+            bgcolor: "red",
+            width: 40,
+            height: 40,
+            mr: 1,
+          }}
         />
-        {!isCollapsed && (
-          <ListItemText
-            primary={userName}
-            sx={{ ml: 2, color: "white", wordBreak: "break-word" }}
-          />
-        )}
+        <ListItemText
+          primary={userName}
+          sx={{
+            color: "white",
+            wordBreak: "break-word",
+            opacity: isCollapsed ? 0 : 1,
+            transition: "opacity 0.3s ease",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+          }}
+        />
       </Box>
 
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>

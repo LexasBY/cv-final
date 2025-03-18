@@ -1,5 +1,5 @@
 import { IconButton } from "@mui/material";
-import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import { ChevronLeft } from "@mui/icons-material";
 
 interface SidebarToggleProps {
   isCollapsed: boolean;
@@ -16,7 +16,7 @@ export const SidebarToggle = ({ isCollapsed, toggle }: SidebarToggleProps) => {
         transform: isCollapsed ? "rotate(180deg)" : "rotate(0deg)",
       }}
     >
-      {isCollapsed ? <ChevronRight /> : <ChevronLeft />}
+      <ChevronLeft />
     </IconButton>
   );
 };
