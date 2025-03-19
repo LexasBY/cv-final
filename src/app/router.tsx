@@ -7,7 +7,7 @@ import SkillsPage from "../pages/profile/SkillsPage";
 import LanguagesPage from "../pages/profile/LanguagesPage";
 import CVsPage from "../pages/profile/CVsPage";
 import ProfilePage from "../pages/profile/ProfilePage";
-import { UsersPage } from "../pages/profile/UsersPage";
+import { UsersPage } from "../pages/employees";
 
 export const Router = () => (
   <Routes>
