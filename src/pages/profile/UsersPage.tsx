@@ -45,9 +45,9 @@ export const UsersPage = () => {
   const { data, loading, error } = useQuery<{ users: User[] }>(GET_USERS);
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortColumn, setSortColumn] = useState<keyof User | "full_name">(
-    "email"
-  );
+  const [sortColumn, setSortColumn] = useState<
+    keyof User | "first_name" | "last_name"
+  >("email");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -71,13 +71,13 @@ export const UsersPage = () => {
       let valA: string, valB: string;
 
       switch (sortColumn) {
-        case "full_name":
-          valA = `${a.profile.first_name ?? ""} ${
-            a.profile.last_name ?? ""
-          }`.trim();
-          valB = `${b.profile.first_name ?? ""} ${
-            b.profile.last_name ?? ""
-          }`.trim();
+        case "first_name":
+          valA = a.profile.first_name ?? "";
+          valB = b.profile.first_name ?? "";
+          break;
+        case "last_name":
+          valA = a.profile.last_name ?? "";
+          valB = b.profile.last_name ?? "";
           break;
         case "email":
           valA = a.email;
@@ -104,7 +104,7 @@ export const UsersPage = () => {
   if (loading) return <Box>Loading...</Box>;
   if (error) return <Box>Error fetching users</Box>;
 
-  const handleSort = (column: keyof User | "full_name") => {
+  const handleSort = (column: keyof User | "first_name" | "last_name") => {
     setSortDirection((prev) =>
       sortColumn === column ? (prev === "asc" ? "desc" : "asc") : "asc"
     );
@@ -162,11 +162,20 @@ export const UsersPage = () => {
               <TableCell></TableCell>
               <TableCell>
                 <TableSortLabel
-                  active={sortColumn === "full_name"}
+                  active={sortColumn === "first_name"}
                   direction={sortDirection}
-                  onClick={() => handleSort("full_name")}
+                  onClick={() => handleSort("first_name")}
                 >
-                  Full Name
+                  First Name
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={sortColumn === "last_name"}
+                  direction={sortDirection}
+                  onClick={() => handleSort("last_name")}
+                >
+                  Last Name
                 </TableSortLabel>
               </TableCell>
               <TableCell>
@@ -219,11 +228,8 @@ export const UsersPage = () => {
                       {!user.profile.avatar && userInitials}
                     </Avatar>
                   </TableCell>
-                  <TableCell>
-                    {`${user.profile.first_name ?? ""} ${
-                      user.profile.last_name ?? ""
-                    }`.trim()}
-                  </TableCell>
+                  <TableCell>{user.profile.first_name ?? "—"}</TableCell>
+                  <TableCell>{user.profile.last_name ?? "—"}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.department?.name ?? "—"}</TableCell>
                   <TableCell>{user.position?.name ?? "—"}</TableCell>
