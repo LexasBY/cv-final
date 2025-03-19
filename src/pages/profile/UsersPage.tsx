@@ -13,7 +13,6 @@ import {
   IconButton,
   Menu,
   MenuItem,
-  Paper,
   InputAdornment,
   Typography,
 } from "@mui/material";
@@ -138,6 +137,12 @@ export const UsersPage = () => {
           placeholder="Search"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          sx={{
+            maxWidth: 400,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "50px",
+            },
+          }}
           slotProps={{
             input: {
               startAdornment: (
@@ -150,7 +155,7 @@ export const UsersPage = () => {
         />
       </Box>
 
-      <TableContainer component={Paper} sx={{ maxHeight: "70vh" }}>
+      <TableContainer sx={{ maxHeight: "70vh" }}>
         <Table stickyHeader>
           <TableHead>
             <TableRow>
