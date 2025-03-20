@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useUsers } from "./model/useUsers";
 import { SearchInput } from "./ui/SearchInput";
 import { UsersTable } from "./ui/UsersTable";
-import { User } from "../../shared/api/types";
 import { SortColumn } from "./model/useUsers";
+import { User } from "../../shared/api/graphql/generated";
 
 export const UsersPage = () => {
   const navigate = useNavigate();

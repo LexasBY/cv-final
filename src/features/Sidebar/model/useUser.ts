@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { GET_USER } from "./queries";
-import { User } from "../../../shared/api/types";
+import { User } from "../../../shared/api/graphql/generated";
 
 interface GetUserData {
   user: User;

@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useQuery, gql } from "@apollo/client";
-import { User } from "../../../shared/api/types";
+import { User } from "../../../shared/api/graphql/generated";
 
 const GET_USERS = gql`
   query GetUsers {

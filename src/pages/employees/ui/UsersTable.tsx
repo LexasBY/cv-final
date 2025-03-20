@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { MoreVert, ArrowForward } from "@mui/icons-material";
 import { SortColumn } from "../model/useUsers";
-import { User } from "../../../shared/api/types";
+import { User } from "../../../shared/api/graphql/generated";
 
 type UsersTableProps = {
   users: User[];
