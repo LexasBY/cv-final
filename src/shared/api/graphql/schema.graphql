@@ -1,0 +1,480 @@
+type DeleteResult {
+  affected: Int!
+}
+
+input AuthInput {
+  email: String!
+  password: String!
+}
+
+type AuthResult {
+  user: User!
+  access_token: String!
+  refresh_token: String!
+}
+
+type Query {
+  login(auth: AuthInput!): AuthResult!
+  cvs: [Cv!]!
+  cv(cvId: ID!): Cv!
+  departments: [Department!]!
+  languages: [Language]!
+  positions: [Position!]!
+  position(id: ID!): Position!
+  profile(userId: ID!): Profile!
+  projects: [Project!]!
+  project(projectId: ID!): Project!
+  skillCategories: [SkillCategory!]!
+  skills: [Skill!]!
+  users: [User!]!
+  user(userId: ID!): User!
+}
+
+input ForgotPasswordInput {
+  email: String!
+}
+
+input ResetPasswordInput {
+  newPassword: String!
+}
+
+type UpdateTokenResult {
+  access_token: String!
+  refresh_token: String!
+}
+
+# The `Void` scalar type represents a null variable.
+scalar Void
+
+type Mutation {
+  signup(auth: AuthInput!): AuthResult!
+  forgotPassword(auth: ForgotPasswordInput!): Void
+  resetPassword(auth: ResetPasswordInput!): Void
+  updateToken: UpdateTokenResult!
+  addCvProject(project: AddCvProjectInput!): Cv!
+  updateCvProject(project: UpdateCvProjectInput!): Cv!
+  removeCvProject(project: RemoveCvProjectInput!): Cv!
+  addCvSkill(skill: AddCvSkillInput!): Cv!
+  updateCvSkill(skill: UpdateCvSkillInput!): Cv!
+  deleteCvSkill(skill: DeleteCvSkillInput!): Cv!
+  createCv(cv: CreateCvInput!): Cv!
+  updateCv(cv: UpdateCvInput!): Cv!
+  deleteCv(cv: DeleteCvInput!): DeleteResult!
+  exportPdf(pdf: ExportPdfInput!): String!
+  createDepartment(department: CreateDepartmentInput!): Department!
+  updateDepartment(department: UpdateDepartmentInput!): Department!
+  deleteDepartment(department: DeleteDepartmentInput!): DeleteResult!
+  createLanguage(language: CreateLanguageInput!): Language!
+  updateLanguage(language: UpdateLanguageInput!): Language!
+  deleteLanguage(language: DeleteLanguageInput!): DeleteResult!
+  verifyMail(mail: VerifyMailInput!): Void
+  createPosition(position: CreatePositionInput!): Position!
+  updatePosition(position: UpdatePositionInput!): Position!
+  deletePosition(position: DeletePositionInput!): DeleteResult!
+  updateProfile(profile: UpdateProfileInput!): Profile!
+  uploadAvatar(avatar: UploadAvatarInput!): String!
+  deleteAvatar(avatar: DeleteAvatarInput!): Void
+  addProfileLanguage(language: AddProfileLanguageInput!): Profile!
+  updateProfileLanguage(language: UpdateProfileLanguageInput!): Profile!
+  deleteProfileLanguage(language: DeleteProfileLanguageInput!): Profile!
+  addProfileSkill(skill: AddProfileSkillInput!): Profile!
+  updateProfileSkill(skill: UpdateProfileSkillInput!): Profile!
+  deleteProfileSkill(skill: DeleteProfileSkillInput!): Profile!
+  createProject(project: CreateProjectInput!): Project!
+  updateProject(project: UpdateProjectInput!): Project!
+  deleteProject(project: DeleteProjectInput!): DeleteResult!
+  createSkill(skill: CreateSkillInput!): Skill!
+  updateSkill(skill: UpdateSkillInput!): Skill!
+  deleteSkill(skill: DeleteSkillInput!): DeleteResult!
+  createUser(user: CreateUserInput!): User!
+  updateUser(user: UpdateUserInput!): User!
+  deleteUser(userId: ID!): DeleteResult!
+}
+
+type CvProject {
+  id: ID!
+  project: Project!
+  name: String!
+  internal_name: String!
+  description: String!
+  domain: String!
+  start_date: String!
+  end_date: String
+  environment: [String!]!
+  roles: [String!]!
+  responsibilities: [String!]!
+}
+
+input AddCvProjectInput {
+  cvId: ID!
+  projectId: ID!
+  start_date: String!
+  end_date: String
+  roles: [String!]!
+  responsibilities: [String!]!
+}
+
+input UpdateCvProjectInput {
+  cvId: ID!
+  projectId: ID!
+  start_date: String!
+  end_date: String
+  roles: [String!]!
+  responsibilities: [String!]!
+}
+
+input RemoveCvProjectInput {
+  cvId: ID!
+  projectId: ID!
+}
+
+input AddCvSkillInput {
+  cvId: ID!
+  name: String!
+  categoryId: ID
+  mastery: Mastery!
+}
+
+input UpdateCvSkillInput {
+  cvId: ID!
+  name: String!
+  categoryId: ID
+  mastery: Mastery!
+}
+
+input DeleteCvSkillInput {
+  cvId: ID!
+  name: [String!]!
+}
+
+type Cv {
+  id: ID!
+  created_at: String!
+  name: String!
+  education: String
+  description: String!
+  user: User
+  projects: [CvProject!]
+  skills: [SkillMastery!]!
+  languages: [LanguageProficiency!]!
+}
+
+input CreateCvInput {
+  name: String!
+  education: String
+  description: String!
+  userId: ID
+}
+
+input UpdateCvInput {
+  cvId: ID!
+  name: String!
+  education: String
+  description: String!
+}
+
+input DeleteCvInput {
+  cvId: ID!
+}
+
+input MarginInput {
+  top: String!
+  bottom: String!
+  left: String!
+  right: String!
+}
+
+input ExportPdfInput {
+  html: String!
+  margin: MarginInput
+}
+
+type Department {
+  id: ID!
+  created_at: String!
+  name: String!
+}
+
+input CreateDepartmentInput {
+  name: String!
+}
+
+input UpdateDepartmentInput {
+  departmentId: ID!
+  name: String!
+}
+
+input DeleteDepartmentInput {
+  departmentId: ID!
+}
+
+enum Proficiency {
+  A1
+  A2
+  B1
+  B2
+  C1
+  C2
+  Native
+}
+
+type Language {
+  id: ID!
+  created_at: String!
+  iso2: String!
+  name: String!
+  native_name: String
+}
+
+input CreateLanguageInput {
+  iso2: String!
+  name: String!
+  native_name: String
+}
+
+input UpdateLanguageInput {
+  languageId: ID!
+  iso2: String!
+  name: String!
+  native_name: String
+}
+
+input DeleteLanguageInput {
+  languageId: ID!
+}
+
+type LanguageProficiency {
+  name: String!
+  proficiency: Proficiency!
+}
+
+input LanguageProficiencyInput {
+  name: String!
+  proficiency: Proficiency!
+}
+
+type Mail {
+  id: ID!
+  created_at: String!
+  email: String!
+  otp: String!
+}
+
+input VerifyMailInput {
+  otp: String!
+}
+
+type Position {
+  id: ID!
+  created_at: String!
+  name: String!
+}
+
+input CreatePositionInput {
+  name: String!
+}
+
+input UpdatePositionInput {
+  positionId: ID!
+  name: String!
+}
+
+input DeletePositionInput {
+  positionId: ID!
+}
+
+type Profile {
+  id: ID!
+  created_at: String!
+  first_name: String
+  last_name: String
+  full_name: String
+  avatar: String
+  skills: [SkillMastery!]!
+  languages: [LanguageProficiency!]!
+}
+
+input CreateProfileInput {
+  first_name: String
+  last_name: String
+}
+
+input UpdateProfileInput {
+  userId: ID!
+  first_name: String
+  last_name: String
+}
+
+input DeleteProfileInput {
+  userId: ID!
+}
+
+input UploadAvatarInput {
+  userId: ID!
+  base64: String!
+  size: Int!
+  type: String!
+}
+
+input DeleteAvatarInput {
+  userId: ID!
+}
+
+input AddProfileLanguageInput {
+  userId: ID!
+  name: String!
+  proficiency: Proficiency!
+}
+
+input UpdateProfileLanguageInput {
+  userId: ID!
+  name: String!
+  proficiency: Proficiency!
+}
+
+input DeleteProfileLanguageInput {
+  userId: ID!
+  name: [String!]!
+}
+
+input AddProfileSkillInput {
+  userId: ID!
+  name: String!
+  categoryId: ID
+  mastery: Mastery!
+}
+
+input UpdateProfileSkillInput {
+  userId: ID!
+  name: String!
+  categoryId: ID
+  mastery: Mastery!
+}
+
+input DeleteProfileSkillInput {
+  userId: ID!
+  name: [String!]!
+}
+
+type Project {
+  id: ID!
+  created_at: String!
+  name: String!
+  internal_name: String!
+  domain: String!
+  start_date: String!
+  end_date: String
+  description: String!
+  environment: [String!]!
+}
+
+input CreateProjectInput {
+  name: String!
+  domain: String!
+  start_date: String!
+  end_date: String
+  description: String!
+  environment: [String!]!
+}
+
+input UpdateProjectInput {
+  projectId: ID!
+  name: String!
+  domain: String!
+  start_date: String!
+  end_date: String
+  description: String!
+  environment: [String!]!
+}
+
+input DeleteProjectInput {
+  projectId: ID!
+}
+
+type SkillCategory {
+  id: ID!
+  name: String!
+  order: Int!
+  parent: SkillCategory
+  children: [SkillCategory!]!
+}
+
+enum Mastery {
+  Novice
+  Advanced
+  Competent
+  Proficient
+  Expert
+}
+
+type SkillMastery {
+  name: String!
+  categoryId: ID
+  mastery: Mastery!
+}
+
+input SkillMasteryInput {
+  name: String!
+  categoryId: ID
+  mastery: Mastery!
+}
+
+type Skill {
+  id: ID!
+  created_at: String!
+  name: String!
+  category: SkillCategory
+  category_name: String
+  category_parent_name: String
+}
+
+input CreateSkillInput {
+  name: String!
+  categoryId: ID
+}
+
+input UpdateSkillInput {
+  skillId: ID!
+  name: String!
+  categoryId: ID
+}
+
+input DeleteSkillInput {
+  skillId: ID!
+}
+
+enum UserRole {
+  Employee
+  Admin
+}
+
+type User {
+  id: ID!
+  created_at: String!
+  email: String!
+  is_verified: Boolean!
+  profile: Profile!
+  cvs: [Cv!]
+  department: Department
+  department_name: String
+  position: Position
+  position_name: String
+  role: UserRole!
+}
+
+input CreateUserInput {
+  auth: AuthInput!
+  profile: CreateProfileInput!
+  cvsIds: [String!]!
+  departmentId: ID
+  positionId: ID
+  role: UserRole!
+}
+
+input UpdateUserInput {
+  userId: ID!
+  cvsIds: [String!]
+  departmentId: ID
+  positionId: ID
+  role: UserRole
+}

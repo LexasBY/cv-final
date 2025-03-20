@@ -28,6 +28,22 @@ export interface SkillMastery {
   categoryId?: string;
   mastery: "Novice" | "Advanced" | "Competent" | "Proficient" | "Expert";
 }
+export interface SkillCategory {
+  id: string;
+  name: string;
+  order: number;
+  parent?: SkillCategory | null;
+  children: SkillCategory[];
+}
+
+export interface Skill {
+  id: string;
+  created_at: string;
+  name: string;
+  category?: SkillCategory | null;
+  category_name?: string | null;
+  category_parent_name?: string | null;
+}
 
 export interface LanguageProficiency {
   name: string;

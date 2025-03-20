@@ -6,8 +6,8 @@ import Layout from "./Layout";
 import SkillsPage from "../pages/profile/SkillsPage";
 import LanguagesPage from "../pages/profile/LanguagesPage";
 import CVsPage from "../pages/profile/CVsPage";
-import ProfilePage from "../pages/profile/ProfilePage";
 import { UsersPage } from "../pages/employees";
+import { ProfilePage } from "../pages/userProfile/ui/ProfilePage";
 
 export const Router = () => (
   <Routes>
