@@ -1,81 +1,19 @@
-import { useQuery, gql, useMutation } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
+
+import {
+  GET_USER,
+  GET_DEPARTMENTS,
+  GET_POSITIONS,
+  UPDATE_PROFILE,
+  UPDATE_USER,
+  UPLOAD_AVATAR,
+  DELETE_AVATAR,
+} from "../../../shared/api/user/user.api";
+
 import { Department, Position } from "../../../shared/api/graphql/generated";
-
-const GET_USER = gql`
-  query getUser($userId: ID!) {
-    user(userId: $userId) {
-      id
-      email
-      created_at
-      profile {
-        id
-        first_name
-        last_name
-        avatar
-      }
-      department {
-        id
-        name
-      }
-      position {
-        id
-        name
-      }
-    }
-  }
-`;
-
-const GET_DEPARTMENTS = gql`
-  query getDepartments {
-    departments {
-      id
-      name
-    }
-  }
-`;
-
-const GET_POSITIONS = gql`
-  query getPositions {
-    positions {
-      id
-      name
-    }
-  }
-`;
-
-const UPDATE_PROFILE = gql`
-  mutation updateProfile($profile: UpdateProfileInput!) {
-    updateProfile(profile: $profile) {
-      id
-      first_name
-      last_name
-    }
-  }
-`;
-
-const UPDATE_USER = gql`
-  mutation updateUser($user: UpdateUserInput!) {
-    updateUser(user: $user) {
-      id
-      department {
-        id
-        name
-      }
-      position {
-        id
-        name
-      }
-    }
-  }
-`;
-
-const UPLOAD_AVATAR = gql`
-  mutation UploadAvatar($avatar: UploadAvatarInput!) {
-    uploadAvatar(avatar: $avatar)
-  }
-`;
+import { fileToBase64 } from "../../../shared/lib/fileToBase64";
 
 export const useUserProfile = () => {
   const { userId } = useParams();
@@ -106,6 +44,7 @@ export const useUserProfile = () => {
   const [updateProfile] = useMutation(UPDATE_PROFILE);
   const [updateUser] = useMutation(UPDATE_USER);
   const [uploadAvatar] = useMutation(UPLOAD_AVATAR);
+  const [deleteAvatar] = useMutation(DELETE_AVATAR);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -136,10 +75,10 @@ export const useUserProfile = () => {
     }
   }, [userData]);
 
-  const isEditable = useMemo(() => {
-    if (!userId) return false;
-    return isAdmin || isSelf;
-  }, [userId, isAdmin, isSelf]);
+  const isEditable = useMemo(
+    () => !!userId && (isAdmin || isSelf),
+    [userId, isAdmin, isSelf]
+  );
 
   const hasChanges = useMemo(() => {
     return (
@@ -196,26 +135,34 @@ export const useUserProfile = () => {
 
   const handleAvatarUpload = async (file: File) => {
     if (!userData?.user) return;
-    const reader = new FileReader();
 
-    reader.onloadend = async () => {
-      const base64 = reader.result as string;
-
-      await uploadAvatar({
-        variables: {
-          avatar: {
-            userId: userData.user.id,
-            base64,
-            size: file.size,
-            type: file.type,
-          },
+    const base64 = await fileToBase64(file);
+    await uploadAvatar({
+      variables: {
+        avatar: {
+          userId: userData.user.id,
+          base64,
+          size: file.size,
+          type: file.type,
         },
-      });
+      },
+    });
 
-      await refetch();
-    };
+    await refetch();
+  };
 
-    reader.readAsDataURL(file);
+  const handleAvatarRemove = async () => {
+    if (!userData?.user) return;
+
+    await deleteAvatar({
+      variables: {
+        avatar: {
+          userId: userData.user.id,
+        },
+      },
+    });
+
+    await refetch();
   };
 
   const user = userData?.user;
@@ -245,5 +192,6 @@ export const useUserProfile = () => {
     positions,
     handleUpdate,
     handleAvatarUpload,
+    handleAvatarRemove,
   };
 };

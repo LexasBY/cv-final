@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import { ChevronRight } from "@mui/icons-material";
+import { ChevronRight, Close } from "@mui/icons-material";
 
 import { useUserProfile } from "../model/useUserProfile";
 import { SkillsList } from "./SkillsList";
@@ -42,6 +42,7 @@ export const ProfilePage: React.FC = () => {
     positions,
     handleUpdate,
     handleAvatarUpload,
+    handleAvatarRemove,
   } = useUserProfile();
 
   const [tabIndex, setTabIndex] = useState(0);
@@ -63,9 +64,8 @@ export const ProfilePage: React.FC = () => {
       </Box>
     );
   }
-  if (error || !user) {
-    return <Box>Error fetching user</Box>;
-  }
+
+  if (error || !user) return <Box>Error fetching user</Box>;
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
@@ -80,6 +80,7 @@ export const ProfilePage: React.FC = () => {
 
   return (
     <Box sx={{ px: 4, py: 3, mx: "auto" }}>
+      {/* Хлебные крошки */}
       <Box display="flex" alignItems="center" gap={1} mb={2}>
         <Typography
           variant="body2"
@@ -89,15 +90,12 @@ export const ProfilePage: React.FC = () => {
         >
           Employees
         </Typography>
-
         <Typography variant="body2" color="text.secondary">
           <ChevronRight />
         </Typography>
-
         <Typography variant="body2" sx={{ fontWeight: "bold" }}>
           {user.profile.first_name} {user.profile.last_name}
         </Typography>
-
         {tabIndex !== 0 && (
           <>
             <Typography variant="body2" color="text.secondary">
@@ -110,6 +108,7 @@ export const ProfilePage: React.FC = () => {
         )}
       </Box>
 
+      {/* Табы */}
       <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
         <Tabs value={tabIndex} onChange={handleTabChange}>
           <Tab label="PROFILE" />
@@ -120,51 +119,83 @@ export const ProfilePage: React.FC = () => {
 
       {tabIndex === 0 && (
         <Box>
-          <Box textAlign="center" mb={3}>
-            <Avatar
-              src={user.profile.avatar || ""}
-              sx={{ width: 120, height: 120, bgcolor: "gray", mx: "auto" }}
+          {/* Центрированный блок аватара и загрузки */}
+          <Box display="flex" justifyContent="center" mb={4}>
+            <Box
+              display="flex"
+              alignItems="center"
+              gap={4}
+              sx={{ flexWrap: "wrap", maxWidth: 600 }}
             >
-              {!user.profile.avatar &&
-                user.profile.first_name?.charAt(0).toUpperCase()}
-            </Avatar>
+              <Box position="relative" sx={{ width: 120, height: 120 }}>
+                <Avatar
+                  src={user.profile.avatar || ""}
+                  sx={{ width: 120, height: 120, bgcolor: "gray" }}
+                >
+                  {!user.profile.avatar &&
+                    user.profile.first_name?.charAt(0).toUpperCase()}
+                </Avatar>
 
-            {isEditable && (
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                gap={1}
-                mt={1}
-              >
-                <IconButton color="primary" component="label">
-                  <UploadFileIcon />
-                  <input
-                    hidden
-                    accept="image/*"
-                    type="file"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleAvatarUpload(file);
+                {isEditable && user.profile.avatar && (
+                  <IconButton
+                    size="small"
+                    onClick={handleAvatarRemove}
+                    sx={{
+                      position: "absolute",
+                      top: -8,
+                      right: -8,
+                      color: "white",
+                      "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
                     }}
-                  />
-                </IconButton>
-                <Typography variant="body2">Upload avatar image</Typography>
+                  >
+                    <Close fontSize="small" />
+                  </IconButton>
+                )}
               </Box>
-            )}
 
-            <Typography variant="h5" mt={2}>
-              {user.profile.first_name} {user.profile.last_name}
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              {user.email}
-            </Typography>
-            <Typography variant="body1" color="text.secondary" mt={1}>
-              A member since {joinedDate}
-            </Typography>
+              {isEditable && (
+                <Box>
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <IconButton color="primary" component="label">
+                      <UploadFileIcon />
+                      <input
+                        hidden
+                        accept="image/png, image/jpeg, image/jpg, image/gif"
+                        type="file"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleAvatarUpload(file);
+                        }}
+                      />
+                    </IconButton>
+                    <Typography variant="body1">Upload avatar image</Typography>
+                  </Box>
+                  <Typography variant="body2" color="text.secondary" mt={1}>
+                    png, jpg or gif no more than 0.5MB
+                  </Typography>
+                </Box>
+              )}
+            </Box>
           </Box>
 
-          <Box maxWidth={900} mx="auto">
+          {/* Информация */}
+          <Typography variant="h5" mt={2} align="center">
+            {user.profile.first_name} {user.profile.last_name}
+          </Typography>
+          <Typography variant="body1" color="text.secondary" align="center">
+            {user.email}
+          </Typography>
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            mt={1}
+            align="center"
+          >
+            A member since {joinedDate}
+          </Typography>
+
+          {/* Поля профиля */}
+          <Box maxWidth={900} mx="auto" mt={3}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
