@@ -2,13 +2,11 @@ import React, { useState } from "react";
 import {
   Box,
   Typography,
-  Avatar,
   Button,
   Tab,
   Tabs,
   CircularProgress,
   Grid,
-  IconButton,
   TextField,
   FormControl,
   InputLabel,
@@ -16,12 +14,12 @@ import {
   MenuItem,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
-import { ChevronRight, Close } from "@mui/icons-material";
+import { ChevronRight } from "@mui/icons-material";
 
 import { useUserProfile } from "../model/useUserProfile";
 import { SkillsList } from "./SkillsList";
 import { useUserSkills } from "../model/useUserSkills";
+import { AvatarDropzone } from "../model/AvatarDropzone";
 
 export const ProfilePage: React.FC = () => {
   const {
@@ -121,61 +119,13 @@ export const ProfilePage: React.FC = () => {
         <Box>
           {/* Центрированный блок аватара и загрузки */}
           <Box display="flex" justifyContent="center" mb={4}>
-            <Box
-              display="flex"
-              alignItems="center"
-              gap={4}
-              sx={{ flexWrap: "wrap", maxWidth: 600 }}
-            >
-              <Box position="relative" sx={{ width: 120, height: 120 }}>
-                <Avatar
-                  src={user.profile.avatar || ""}
-                  sx={{ width: 120, height: 120, bgcolor: "gray" }}
-                >
-                  {!user.profile.avatar &&
-                    user.profile.first_name?.charAt(0).toUpperCase()}
-                </Avatar>
-
-                {isEditable && user.profile.avatar && (
-                  <IconButton
-                    size="small"
-                    onClick={handleAvatarRemove}
-                    sx={{
-                      position: "absolute",
-                      top: -8,
-                      right: -8,
-                      color: "white",
-                      "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
-                    }}
-                  >
-                    <Close fontSize="small" />
-                  </IconButton>
-                )}
-              </Box>
-
-              {isEditable && (
-                <Box>
-                  <Box display="flex" alignItems="center" gap={1}>
-                    <IconButton color="primary" component="label">
-                      <UploadFileIcon />
-                      <input
-                        hidden
-                        accept="image/png, image/jpeg, image/jpg, image/gif"
-                        type="file"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) handleAvatarUpload(file);
-                        }}
-                      />
-                    </IconButton>
-                    <Typography variant="body1">Upload avatar image</Typography>
-                  </Box>
-                  <Typography variant="body2" color="text.secondary" mt={1}>
-                    png, jpg or gif no more than 0.5MB
-                  </Typography>
-                </Box>
-              )}
-            </Box>
+            <AvatarDropzone
+              avatarUrl={user.profile.avatar}
+              firstName={user.profile.first_name}
+              isEditable={isEditable}
+              onUpload={handleAvatarUpload}
+              onRemove={handleAvatarRemove}
+            />
           </Box>
 
           {/* Информация */}
