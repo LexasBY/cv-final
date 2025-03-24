@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Typography, CircularProgress } from "@mui/material";
-import { Skill } from "../../../shared/api/types";
+import { Skill } from "../../../shared/api/graphql/generated";
 
 type SkillsListProps = {
   skills: Skill[];

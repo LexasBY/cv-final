@@ -71,6 +71,12 @@ const UPDATE_USER = gql`
   }
 `;
 
+const UPLOAD_AVATAR = gql`
+  mutation UploadAvatar($avatar: UploadAvatarInput!) {
+    uploadAvatar(avatar: $avatar)
+  }
+`;
+
 export const useUserProfile = () => {
   const { userId } = useParams();
   const currentUserId = localStorage.getItem("userId");
@@ -87,7 +93,6 @@ export const useUserProfile = () => {
     skip: !userId,
   });
 
-  // Выполняем запросы департаментов и позиций только для своего профиля
   const { data: departmentsData, loading: deptLoading } = useQuery(
     GET_DEPARTMENTS,
     {
@@ -100,6 +105,7 @@ export const useUserProfile = () => {
 
   const [updateProfile] = useMutation(UPDATE_PROFILE);
   const [updateUser] = useMutation(UPDATE_USER);
+  const [uploadAvatar] = useMutation(UPLOAD_AVATAR);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -155,15 +161,16 @@ export const useUserProfile = () => {
 
   const handleUpdate = async () => {
     if (!userData?.user) return;
-    const profileId = userData.user.profile.id;
+
+    const userId = userData.user.id;
 
     if (firstName !== originalFirstName || lastName !== originalLastName) {
       await updateProfile({
         variables: {
           profile: {
-            id: profileId,
-            firstName,
-            lastName,
+            userId,
+            first_name: firstName,
+            last_name: lastName,
           },
         },
       });
@@ -176,7 +183,7 @@ export const useUserProfile = () => {
       await updateUser({
         variables: {
           user: {
-            id: userData.user.id,
+            userId,
             departmentId,
             positionId,
           },
@@ -184,7 +191,31 @@ export const useUserProfile = () => {
       });
     }
 
-    refetch();
+    await refetch();
+  };
+
+  const handleAvatarUpload = async (file: File) => {
+    if (!userData?.user) return;
+    const reader = new FileReader();
+
+    reader.onloadend = async () => {
+      const base64 = reader.result as string;
+
+      await uploadAvatar({
+        variables: {
+          avatar: {
+            userId: userData.user.id,
+            base64,
+            size: file.size,
+            type: file.type,
+          },
+        },
+      });
+
+      await refetch();
+    };
+
+    reader.readAsDataURL(file);
   };
 
   const user = userData?.user;
@@ -213,5 +244,6 @@ export const useUserProfile = () => {
     departments,
     positions,
     handleUpdate,
+    handleAvatarUpload,
   };
 };

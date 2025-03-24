@@ -9,20 +9,19 @@ import {
   CircularProgress,
   Grid,
   IconButton,
-} from "@mui/material";
-import { Link } from "react-router-dom";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
-
-import { useUserProfile } from "../model/useUserProfile";
-import { SkillsList } from "./SkillsList";
-import { useUserSkills } from "../model/useUserSkills";
-import {
   TextField,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
 } from "@mui/material";
+import { Link } from "react-router-dom";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import { ChevronRight } from "@mui/icons-material";
+
+import { useUserProfile } from "../model/useUserProfile";
+import { SkillsList } from "./SkillsList";
+import { useUserSkills } from "../model/useUserSkills";
 
 export const ProfilePage: React.FC = () => {
   const {
@@ -42,6 +41,7 @@ export const ProfilePage: React.FC = () => {
     departments,
     positions,
     handleUpdate,
+    handleAvatarUpload,
   } = useUserProfile();
 
   const [tabIndex, setTabIndex] = useState(0);
@@ -71,14 +71,8 @@ export const ProfilePage: React.FC = () => {
     setTabIndex(newValue);
   };
 
-  // Дата регистрации в формате, похожем на "Mon Dec 09 2024"
   const joinedDate = new Date(parseInt(user.created_at, 10)).toDateString();
-
-  // Кнопка UPDATE доступна, если профиль свой и есть изменения
   const canUpdate = isEditable && hasChanges;
-
-  // Для чужого профиля берём департамент и позицию из user,
-  // а для своего - используем departmentId и positionId, меняя их через селекты.
   const displayDepartment = isEditable
     ? departmentId
     : user.department?.id || "";
@@ -86,7 +80,6 @@ export const ProfilePage: React.FC = () => {
 
   return (
     <Box sx={{ px: 4, py: 3, mx: "auto" }}>
-      {/* Хлебные крошки */}
       <Box display="flex" alignItems="center" gap={1} mb={2}>
         <Typography
           variant="body2"
@@ -96,15 +89,27 @@ export const ProfilePage: React.FC = () => {
         >
           Employees
         </Typography>
+
         <Typography variant="body2" color="text.secondary">
-          {" > "}
+          <ChevronRight />
         </Typography>
+
         <Typography variant="body2" sx={{ fontWeight: "bold" }}>
           {user.profile.first_name} {user.profile.last_name}
         </Typography>
+
+        {tabIndex !== 0 && (
+          <>
+            <Typography variant="body2" color="text.secondary">
+              <ChevronRight />
+            </Typography>
+            <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+              {tabIndex === 1 ? "Skills" : "Languages"}
+            </Typography>
+          </>
+        )}
       </Box>
 
-      {/* Табы */}
       <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
         <Tabs value={tabIndex} onChange={handleTabChange}>
           <Tab label="PROFILE" />
@@ -113,18 +118,15 @@ export const ProfilePage: React.FC = () => {
         </Tabs>
       </Box>
 
-      {/* Вкладка PROFILE */}
       {tabIndex === 0 && (
         <Box>
-          {/* Аватар и основная инфо по центру */}
           <Box textAlign="center" mb={3}>
             <Avatar
               src={user.profile.avatar || ""}
               sx={{ width: 120, height: 120, bgcolor: "gray", mx: "auto" }}
             >
               {!user.profile.avatar &&
-                user.profile.first_name &&
-                user.profile.first_name.charAt(0).toUpperCase()}
+                user.profile.first_name?.charAt(0).toUpperCase()}
             </Avatar>
 
             {isEditable && (
@@ -137,7 +139,15 @@ export const ProfilePage: React.FC = () => {
               >
                 <IconButton color="primary" component="label">
                   <UploadFileIcon />
-                  <input hidden accept="image/*" type="file" />
+                  <input
+                    hidden
+                    accept="image/*"
+                    type="file"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleAvatarUpload(file);
+                    }}
+                  />
                 </IconButton>
                 <Typography variant="body2">Upload avatar image</Typography>
               </Box>
@@ -156,7 +166,6 @@ export const ProfilePage: React.FC = () => {
 
           <Box maxWidth={900} mx="auto">
             <Grid container spacing={2}>
-              {/* First Name */}
               <Grid item xs={12} sm={6}>
                 <TextField
                   label="First Name"
@@ -167,7 +176,6 @@ export const ProfilePage: React.FC = () => {
                   onChange={(e) => setFirstName(e.target.value)}
                 />
               </Grid>
-              {/* Last Name */}
               <Grid item xs={12} sm={6}>
                 <TextField
                   label="Last Name"
@@ -178,7 +186,6 @@ export const ProfilePage: React.FC = () => {
                   onChange={(e) => setLastName(e.target.value)}
                 />
               </Grid>
-              {/* Department */}
               <Grid item xs={12} sm={6}>
                 {isEditable ? (
                   <FormControl fullWidth>
@@ -190,6 +197,9 @@ export const ProfilePage: React.FC = () => {
                         setDepartmentId(e.target.value as string)
                       }
                     >
+                      <MenuItem value="" disabled hidden>
+                        Select Department
+                      </MenuItem>
                       {departments.map((dept) => (
                         <MenuItem key={dept.id} value={dept.id}>
                           {dept.name}
@@ -207,7 +217,6 @@ export const ProfilePage: React.FC = () => {
                   />
                 )}
               </Grid>
-              {/* Position */}
               <Grid item xs={12} sm={6}>
                 {isEditable ? (
                   <FormControl fullWidth>
@@ -217,6 +226,9 @@ export const ProfilePage: React.FC = () => {
                       value={displayPosition}
                       onChange={(e) => setPositionId(e.target.value as string)}
                     >
+                      <MenuItem value="" disabled hidden>
+                        Select Position
+                      </MenuItem>
                       {positions.map((pos) => (
                         <MenuItem key={pos.id} value={pos.id}>
                           {pos.name}
@@ -236,7 +248,6 @@ export const ProfilePage: React.FC = () => {
               </Grid>
             </Grid>
 
-            {/* Кнопка UPDATE (только если свой профиль) */}
             {isEditable && (
               <Box display="flex" justifyContent="flex-end" mt={3}>
                 <Button
@@ -253,7 +264,6 @@ export const ProfilePage: React.FC = () => {
         </Box>
       )}
 
-      {/* Вкладка SKILLS */}
       {tabIndex === 1 && (
         <Box>
           <Typography variant="h6" mb={2}>
@@ -267,14 +277,13 @@ export const ProfilePage: React.FC = () => {
         </Box>
       )}
 
-      {/* Вкладка LANGUAGES */}
       {tabIndex === 2 && (
         <Box>
           <Typography variant="h6" mb={2}>
             Languages
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Здесь может быть список языков...
+            Languages...
           </Typography>
         </Box>
       )}

@@ -1,6 +1,6 @@
 import { useLazyQuery, gql } from "@apollo/client";
 import { useEffect } from "react";
-import { Skill } from "../../../shared/api/types";
+import { Skill } from "../../../shared/api/graphql/generated";
 
 const GET_USER_SKILLS = gql`
   query getUserSkills($userId: ID!) {

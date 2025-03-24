@@ -7,7 +7,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import { Department, Position } from "../../../shared/api/types";
+import { Department, Position } from "../../../shared/api/graphql/generated";
 
 type ProfileFormProps = {
   firstName: string;

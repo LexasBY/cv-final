@@ -11,7 +11,7 @@ import {
   IconButton,
   Paper,
 } from "@mui/material";
-import { MoreVert, ArrowForward } from "@mui/icons-material";
+import { MoreVert, ChevronRight } from "@mui/icons-material";
 import { SortColumn } from "../model/useUsers";
 import { User } from "../../../shared/api/graphql/generated";
 
@@ -116,7 +116,7 @@ export const UsersTable = ({
                     </IconButton>
                   ) : (
                     <IconButton onClick={() => onUserClick(user)}>
-                      <ArrowForward />
+                      <ChevronRight />
                     </IconButton>
                   )}
                 </TableCell>
