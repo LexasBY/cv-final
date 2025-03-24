@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useQuery, gql } from "@apollo/client";
-import { User } from "../../../shared/api/types";
+import { User } from "../../../shared/api/graphql/generated";
 
 const GET_USERS = gql`
   query GetUsers {
@@ -22,7 +22,6 @@ const GET_USERS = gql`
   }
 `;
 
-// Определяем тип сортировки
 export type SortColumn =
   | "first_name"
   | "last_name"
@@ -37,10 +36,8 @@ export const useUsers = () => {
   const [sortColumn, setSortColumn] = useState<SortColumn>("email");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
-  // Мемоизируем массив пользователей, чтобы не создавать новую ссылку при каждом рендере
   const users = useMemo(() => data?.users || [], [data]);
 
-  // Фильтрация по имени и email
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
       const fullName = `${user.profile.first_name ?? ""} ${
@@ -52,7 +49,6 @@ export const useUsers = () => {
     });
   }, [users, searchTerm]);
 
-  // Сортировка пользователей
   const sortedUsers = useMemo(() => {
     return [...filteredUsers].sort((a, b) => {
       let valA = "";

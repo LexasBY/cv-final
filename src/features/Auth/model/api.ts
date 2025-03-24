@@ -1,5 +1,5 @@
 import { gql, useMutation, useLazyQuery } from "@apollo/client";
-import { AuthInput, AuthResult } from "../../../shared/api/types";
+import { AuthInput, AuthResult } from "../../../shared/api/graphql/generated";
 
 const LOGIN_QUERY = gql`
   query Login($auth: AuthInput!) {
