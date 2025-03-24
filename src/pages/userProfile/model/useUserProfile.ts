@@ -33,10 +33,9 @@ export const useUserProfile = () => {
 
   const { data: departmentsData, loading: deptLoading } = useQuery(
     GET_DEPARTMENTS,
-    {
-      skip: !isSelf,
-    }
+    { skip: !isSelf }
   );
+
   const { data: positionsData, loading: posLoading } = useQuery(GET_POSITIONS, {
     skip: !isSelf,
   });
@@ -48,30 +47,27 @@ export const useUserProfile = () => {
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [departmentId, setDepartmentId] = useState<string | null>(null);
-  const [positionId, setPositionId] = useState<string | null>(null);
+  const [departmentId, setDepartmentId] = useState<string>("");
+  const [positionId, setPositionId] = useState<string>("");
 
   const [originalFirstName, setOriginalFirstName] = useState("");
   const [originalLastName, setOriginalLastName] = useState("");
-  const [originalDepartmentId, setOriginalDepartmentId] = useState<
-    string | null
-  >(null);
-  const [originalPositionId, setOriginalPositionId] = useState<string | null>(
-    null
-  );
+  const [originalDepartmentId, setOriginalDepartmentId] = useState<string>("");
+  const [originalPositionId, setOriginalPositionId] = useState<string>("");
 
   useEffect(() => {
     if (userData?.user) {
       const u = userData.user;
+
       setFirstName(u.profile.first_name ?? "");
       setLastName(u.profile.last_name ?? "");
-      setDepartmentId(u.department?.id ?? null);
-      setPositionId(u.position?.id ?? null);
+      setDepartmentId(u.department?.id ?? "");
+      setPositionId(u.position?.id ?? "");
 
       setOriginalFirstName(u.profile.first_name ?? "");
       setOriginalLastName(u.profile.last_name ?? "");
-      setOriginalDepartmentId(u.department?.id ?? null);
-      setOriginalPositionId(u.position?.id ?? null);
+      setOriginalDepartmentId(u.department?.id ?? "");
+      setOriginalPositionId(u.position?.id ?? "");
     }
   }, [userData]);
 
@@ -123,8 +119,8 @@ export const useUserProfile = () => {
         variables: {
           user: {
             userId,
-            departmentId,
-            positionId,
+            departmentId: departmentId || null,
+            positionId: positionId || null,
           },
         },
       });

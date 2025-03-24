@@ -173,7 +173,7 @@ export const ProfilePage: React.FC = () => {
                     <InputLabel>Department</InputLabel>
                     <Select
                       label="Department"
-                      value={displayDepartment}
+                      value={displayDepartment || ""}
                       onChange={(e) =>
                         setDepartmentId(e.target.value as string)
                       }
@@ -204,7 +204,7 @@ export const ProfilePage: React.FC = () => {
                     <InputLabel>Position</InputLabel>
                     <Select
                       label="Position"
-                      value={displayPosition}
+                      value={displayPosition || ""}
                       onChange={(e) => setPositionId(e.target.value as string)}
                     >
                       <MenuItem value="" disabled hidden>
