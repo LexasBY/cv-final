@@ -24,6 +24,20 @@ export const GET_USER = gql`
   }
 `;
 
+export const GET_USERDATA = gql`
+  query GetUser($userId: ID!) {
+    user(userId: $userId) {
+      id
+      email
+      profile {
+        first_name
+        last_name
+        avatar
+      }
+    }
+  }
+`;
+
 export const GET_DEPARTMENTS = gql`
   query getDepartments {
     departments {

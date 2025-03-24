@@ -7,16 +7,17 @@ interface UserProfileProps {
   userName: string;
   userId: string | null;
   isCollapsed: boolean;
+  avatar?: string;
 }
 
 export const UserProfile = ({
   userName,
   userId,
   isCollapsed,
+  avatar,
 }: UserProfileProps) => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
   const handleAvatarClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -31,6 +32,8 @@ export const UserProfile = ({
     navigate("/auth/login");
   };
 
+  const initial = userName?.charAt(0)?.toUpperCase() || "?";
+
   return (
     <>
       <Box
@@ -44,15 +47,19 @@ export const UserProfile = ({
         }}
       >
         <Avatar
+          src={avatar || undefined}
           onClick={handleAvatarClick}
           sx={{
             cursor: "pointer",
-            bgcolor: "red",
+            bgcolor: avatar ? "transparent" : "gray",
             width: 40,
             height: 40,
             mr: 1,
           }}
-        />
+        >
+          {!avatar && initial}
+        </Avatar>
+
         <ListItemText
           primary={userName}
           sx={{

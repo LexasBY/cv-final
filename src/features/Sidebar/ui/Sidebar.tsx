@@ -7,7 +7,7 @@ import { useUser } from "../model/useUser";
 
 export const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const { userName, loading, userId } = useUser();
+  const { userName, loading, userId, avatar } = useUser();
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
@@ -35,6 +35,7 @@ export const Sidebar = () => {
             userName={userName}
             userId={userId}
             isCollapsed={isCollapsed}
+            avatar={avatar}
           />
           <Box
             sx={{
