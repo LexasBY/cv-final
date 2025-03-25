@@ -583,8 +583,6 @@ export type SkillCategory = {
 };
 
 export type SkillMastery = {
-  category_name: string;
-  category_parent_name: string;
   __typename?: "SkillMastery";
   categoryId?: Maybe<Scalars["ID"]["output"]>;
   mastery: Mastery;
@@ -787,24 +785,6 @@ export type SignupMutation = {
   };
 };
 
-export type GetUserQueryVariables = Exact<{
-  userId: Scalars["ID"]["input"];
-}>;
-
-export type GetUserQuery = {
-  __typename?: "Query";
-  user: {
-    __typename?: "User";
-    id: string;
-    email: string;
-    profile: {
-      __typename?: "Profile";
-      first_name?: string | null;
-      last_name?: string | null;
-    };
-  };
-};
-
 export type GetUsersQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetUsersQuery = {
@@ -822,6 +802,109 @@ export type GetUsersQuery = {
     department?: { __typename?: "Department"; name: string } | null;
     position?: { __typename?: "Position"; name: string } | null;
   }>;
+};
+
+export type ProfileSkillsQueryVariables = Exact<{
+  userId: Scalars["ID"]["input"];
+}>;
+
+export type ProfileSkillsQuery = {
+  __typename?: "Query";
+  profile: {
+    __typename?: "Profile";
+    id: string;
+    skills: Array<{
+      __typename?: "SkillMastery";
+      name: string;
+      mastery: Mastery;
+      categoryId?: string | null;
+    }>;
+  };
+};
+
+export type SkillsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type SkillsQuery = {
+  __typename?: "Query";
+  skills: Array<{
+    __typename?: "Skill";
+    id: string;
+    name: string;
+    category?: { __typename?: "SkillCategory"; id: string } | null;
+  }>;
+};
+
+export type SkillCategoriesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type SkillCategoriesQuery = {
+  __typename?: "Query";
+  skillCategories: Array<{
+    __typename?: "SkillCategory";
+    id: string;
+    name: string;
+    order: number;
+    parent?: { __typename?: "SkillCategory"; id: string; name: string } | null;
+    children: Array<{
+      __typename?: "SkillCategory";
+      id: string;
+      name: string;
+      order: number;
+    }>;
+  }>;
+};
+
+export type AddProfileSkillMutationVariables = Exact<{
+  skill: AddProfileSkillInput;
+}>;
+
+export type AddProfileSkillMutation = {
+  __typename?: "Mutation";
+  addProfileSkill: {
+    __typename?: "Profile";
+    id: string;
+    skills: Array<{
+      __typename?: "SkillMastery";
+      name: string;
+      mastery: Mastery;
+      categoryId?: string | null;
+    }>;
+  };
+};
+
+export type UpdateProfileSkillMutationVariables = Exact<{
+  skill: UpdateProfileSkillInput;
+}>;
+
+export type UpdateProfileSkillMutation = {
+  __typename?: "Mutation";
+  updateProfileSkill: {
+    __typename?: "Profile";
+    id: string;
+    skills: Array<{
+      __typename?: "SkillMastery";
+      name: string;
+      mastery: Mastery;
+      categoryId?: string | null;
+    }>;
+  };
+};
+
+export type DeleteProfileSkillMutationVariables = Exact<{
+  skill: DeleteProfileSkillInput;
+}>;
+
+export type DeleteProfileSkillMutation = {
+  __typename?: "Mutation";
+  deleteProfileSkill: {
+    __typename?: "Profile";
+    id: string;
+    skills: Array<{
+      __typename?: "SkillMastery";
+      name: string;
+      mastery: Mastery;
+      categoryId?: string | null;
+    }>;
+  };
 };
 
 export type GetUserQueryVariables = Exact<{
@@ -844,6 +927,25 @@ export type GetUserQuery = {
     };
     department?: { __typename?: "Department"; id: string; name: string } | null;
     position?: { __typename?: "Position"; id: string; name: string } | null;
+  };
+};
+
+export type GetUserDataQueryVariables = Exact<{
+  userId: Scalars["ID"]["input"];
+}>;
+
+export type GetUserDataQuery = {
+  __typename?: "Query";
+  user: {
+    __typename?: "User";
+    id: string;
+    email: string;
+    profile: {
+      __typename?: "Profile";
+      first_name?: string | null;
+      last_name?: string | null;
+      avatar?: string | null;
+    };
   };
 };
 
@@ -889,22 +991,22 @@ export type UpdateUserMutation = {
   };
 };
 
-export type GetUserSkillsQueryVariables = Exact<{
-  userId: Scalars["ID"]["input"];
+export type UploadAvatarMutationVariables = Exact<{
+  avatar: UploadAvatarInput;
 }>;
 
-export type GetUserSkillsQuery = {
-  __typename?: "Query";
-  profile: {
-    __typename?: "Profile";
-    id: string;
-    skills: Array<{
-      __typename: "SkillMastery";
-      name: string;
-      categoryId?: string | null;
-      mastery: Mastery;
-    }>;
-  };
+export type UploadAvatarMutation = {
+  __typename?: "Mutation";
+  uploadAvatar: string;
+};
+
+export type DeleteAvatarMutationVariables = Exact<{
+  avatar: DeleteAvatarInput;
+}>;
+
+export type DeleteAvatarMutation = {
+  __typename?: "Mutation";
+  deleteAvatar?: unknown | null;
 };
 
 export const LoginDocument = gql`
@@ -1059,77 +1161,6 @@ export type SignupMutationOptions = Apollo.BaseMutationOptions<
   SignupMutation,
   SignupMutationVariables
 >;
-export const GetUserDocument = gql`
-  query GetUser($userId: ID!) {
-    user(userId: $userId) {
-      id
-      email
-      profile {
-        first_name
-        last_name
-      }
-    }
-  }
-`;
-
-/**
- * __useGetUserQuery__
- *
- * To run a query within a React component, call `useGetUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetUserQuery({
- *   variables: {
- *      userId: // value for 'userId'
- *   },
- * });
- */
-export function useGetUserQuery(
-  baseOptions: Apollo.QueryHookOptions<GetUserQuery, GetUserQueryVariables> &
-    ({ variables: GetUserQueryVariables; skip?: boolean } | { skip: boolean })
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetUserQuery, GetUserQueryVariables>(
-    GetUserDocument,
-    options
-  );
-}
-export function useGetUserLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<GetUserQuery, GetUserQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GetUserQuery, GetUserQueryVariables>(
-    GetUserDocument,
-    options
-  );
-}
-export function useGetUserSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<GetUserQuery, GetUserQueryVariables>
-) {
-  const options =
-    baseOptions === Apollo.skipToken
-      ? baseOptions
-      : { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<GetUserQuery, GetUserQueryVariables>(
-    GetUserDocument,
-    options
-  );
-}
-export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
-export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
-export type GetUserSuspenseQueryHookResult = ReturnType<
-  typeof useGetUserSuspenseQuery
->;
-export type GetUserQueryResult = Apollo.QueryResult<
-  GetUserQuery,
-  GetUserQueryVariables
->;
 export const GetUsersDocument = gql`
   query GetUsers {
     users {
@@ -1210,6 +1241,414 @@ export type GetUsersSuspenseQueryHookResult = ReturnType<
 export type GetUsersQueryResult = Apollo.QueryResult<
   GetUsersQuery,
   GetUsersQueryVariables
+>;
+export const ProfileSkillsDocument = gql`
+  query ProfileSkills($userId: ID!) {
+    profile(userId: $userId) {
+      id
+      skills {
+        name
+        mastery
+        categoryId
+      }
+    }
+  }
+`;
+
+/**
+ * __useProfileSkillsQuery__
+ *
+ * To run a query within a React component, call `useProfileSkillsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProfileSkillsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProfileSkillsQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useProfileSkillsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    ProfileSkillsQuery,
+    ProfileSkillsQueryVariables
+  > &
+    (
+      | { variables: ProfileSkillsQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    )
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<ProfileSkillsQuery, ProfileSkillsQueryVariables>(
+    ProfileSkillsDocument,
+    options
+  );
+}
+export function useProfileSkillsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ProfileSkillsQuery,
+    ProfileSkillsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<ProfileSkillsQuery, ProfileSkillsQueryVariables>(
+    ProfileSkillsDocument,
+    options
+  );
+}
+export function useProfileSkillsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        ProfileSkillsQuery,
+        ProfileSkillsQueryVariables
+      >
+) {
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    ProfileSkillsQuery,
+    ProfileSkillsQueryVariables
+  >(ProfileSkillsDocument, options);
+}
+export type ProfileSkillsQueryHookResult = ReturnType<
+  typeof useProfileSkillsQuery
+>;
+export type ProfileSkillsLazyQueryHookResult = ReturnType<
+  typeof useProfileSkillsLazyQuery
+>;
+export type ProfileSkillsSuspenseQueryHookResult = ReturnType<
+  typeof useProfileSkillsSuspenseQuery
+>;
+export type ProfileSkillsQueryResult = Apollo.QueryResult<
+  ProfileSkillsQuery,
+  ProfileSkillsQueryVariables
+>;
+export const SkillsDocument = gql`
+  query Skills {
+    skills {
+      id
+      name
+      category {
+        id
+      }
+    }
+  }
+`;
+
+/**
+ * __useSkillsQuery__
+ *
+ * To run a query within a React component, call `useSkillsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSkillsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSkillsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSkillsQuery(
+  baseOptions?: Apollo.QueryHookOptions<SkillsQuery, SkillsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<SkillsQuery, SkillsQueryVariables>(
+    SkillsDocument,
+    options
+  );
+}
+export function useSkillsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<SkillsQuery, SkillsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<SkillsQuery, SkillsQueryVariables>(
+    SkillsDocument,
+    options
+  );
+}
+export function useSkillsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<SkillsQuery, SkillsQueryVariables>
+) {
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<SkillsQuery, SkillsQueryVariables>(
+    SkillsDocument,
+    options
+  );
+}
+export type SkillsQueryHookResult = ReturnType<typeof useSkillsQuery>;
+export type SkillsLazyQueryHookResult = ReturnType<typeof useSkillsLazyQuery>;
+export type SkillsSuspenseQueryHookResult = ReturnType<
+  typeof useSkillsSuspenseQuery
+>;
+export type SkillsQueryResult = Apollo.QueryResult<
+  SkillsQuery,
+  SkillsQueryVariables
+>;
+export const SkillCategoriesDocument = gql`
+  query SkillCategories {
+    skillCategories {
+      id
+      name
+      order
+      parent {
+        id
+        name
+      }
+      children {
+        id
+        name
+        order
+      }
+    }
+  }
+`;
+
+/**
+ * __useSkillCategoriesQuery__
+ *
+ * To run a query within a React component, call `useSkillCategoriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSkillCategoriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSkillCategoriesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSkillCategoriesQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    SkillCategoriesQuery,
+    SkillCategoriesQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<SkillCategoriesQuery, SkillCategoriesQueryVariables>(
+    SkillCategoriesDocument,
+    options
+  );
+}
+export function useSkillCategoriesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    SkillCategoriesQuery,
+    SkillCategoriesQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    SkillCategoriesQuery,
+    SkillCategoriesQueryVariables
+  >(SkillCategoriesDocument, options);
+}
+export function useSkillCategoriesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        SkillCategoriesQuery,
+        SkillCategoriesQueryVariables
+      >
+) {
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    SkillCategoriesQuery,
+    SkillCategoriesQueryVariables
+  >(SkillCategoriesDocument, options);
+}
+export type SkillCategoriesQueryHookResult = ReturnType<
+  typeof useSkillCategoriesQuery
+>;
+export type SkillCategoriesLazyQueryHookResult = ReturnType<
+  typeof useSkillCategoriesLazyQuery
+>;
+export type SkillCategoriesSuspenseQueryHookResult = ReturnType<
+  typeof useSkillCategoriesSuspenseQuery
+>;
+export type SkillCategoriesQueryResult = Apollo.QueryResult<
+  SkillCategoriesQuery,
+  SkillCategoriesQueryVariables
+>;
+export const AddProfileSkillDocument = gql`
+  mutation AddProfileSkill($skill: AddProfileSkillInput!) {
+    addProfileSkill(skill: $skill) {
+      id
+      skills {
+        name
+        mastery
+        categoryId
+      }
+    }
+  }
+`;
+export type AddProfileSkillMutationFn = Apollo.MutationFunction<
+  AddProfileSkillMutation,
+  AddProfileSkillMutationVariables
+>;
+
+/**
+ * __useAddProfileSkillMutation__
+ *
+ * To run a mutation, you first call `useAddProfileSkillMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddProfileSkillMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addProfileSkillMutation, { data, loading, error }] = useAddProfileSkillMutation({
+ *   variables: {
+ *      skill: // value for 'skill'
+ *   },
+ * });
+ */
+export function useAddProfileSkillMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AddProfileSkillMutation,
+    AddProfileSkillMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    AddProfileSkillMutation,
+    AddProfileSkillMutationVariables
+  >(AddProfileSkillDocument, options);
+}
+export type AddProfileSkillMutationHookResult = ReturnType<
+  typeof useAddProfileSkillMutation
+>;
+export type AddProfileSkillMutationResult =
+  Apollo.MutationResult<AddProfileSkillMutation>;
+export type AddProfileSkillMutationOptions = Apollo.BaseMutationOptions<
+  AddProfileSkillMutation,
+  AddProfileSkillMutationVariables
+>;
+export const UpdateProfileSkillDocument = gql`
+  mutation UpdateProfileSkill($skill: UpdateProfileSkillInput!) {
+    updateProfileSkill(skill: $skill) {
+      id
+      skills {
+        name
+        mastery
+        categoryId
+      }
+    }
+  }
+`;
+export type UpdateProfileSkillMutationFn = Apollo.MutationFunction<
+  UpdateProfileSkillMutation,
+  UpdateProfileSkillMutationVariables
+>;
+
+/**
+ * __useUpdateProfileSkillMutation__
+ *
+ * To run a mutation, you first call `useUpdateProfileSkillMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProfileSkillMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProfileSkillMutation, { data, loading, error }] = useUpdateProfileSkillMutation({
+ *   variables: {
+ *      skill: // value for 'skill'
+ *   },
+ * });
+ */
+export function useUpdateProfileSkillMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateProfileSkillMutation,
+    UpdateProfileSkillMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateProfileSkillMutation,
+    UpdateProfileSkillMutationVariables
+  >(UpdateProfileSkillDocument, options);
+}
+export type UpdateProfileSkillMutationHookResult = ReturnType<
+  typeof useUpdateProfileSkillMutation
+>;
+export type UpdateProfileSkillMutationResult =
+  Apollo.MutationResult<UpdateProfileSkillMutation>;
+export type UpdateProfileSkillMutationOptions = Apollo.BaseMutationOptions<
+  UpdateProfileSkillMutation,
+  UpdateProfileSkillMutationVariables
+>;
+export const DeleteProfileSkillDocument = gql`
+  mutation DeleteProfileSkill($skill: DeleteProfileSkillInput!) {
+    deleteProfileSkill(skill: $skill) {
+      id
+      skills {
+        name
+        mastery
+        categoryId
+      }
+    }
+  }
+`;
+export type DeleteProfileSkillMutationFn = Apollo.MutationFunction<
+  DeleteProfileSkillMutation,
+  DeleteProfileSkillMutationVariables
+>;
+
+/**
+ * __useDeleteProfileSkillMutation__
+ *
+ * To run a mutation, you first call `useDeleteProfileSkillMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteProfileSkillMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteProfileSkillMutation, { data, loading, error }] = useDeleteProfileSkillMutation({
+ *   variables: {
+ *      skill: // value for 'skill'
+ *   },
+ * });
+ */
+export function useDeleteProfileSkillMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteProfileSkillMutation,
+    DeleteProfileSkillMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeleteProfileSkillMutation,
+    DeleteProfileSkillMutationVariables
+  >(DeleteProfileSkillDocument, options);
+}
+export type DeleteProfileSkillMutationHookResult = ReturnType<
+  typeof useDeleteProfileSkillMutation
+>;
+export type DeleteProfileSkillMutationResult =
+  Apollo.MutationResult<DeleteProfileSkillMutation>;
+export type DeleteProfileSkillMutationOptions = Apollo.BaseMutationOptions<
+  DeleteProfileSkillMutation,
+  DeleteProfileSkillMutationVariables
 >;
 export const GetUserDocument = gql`
   query getUser($userId: ID!) {
@@ -1292,6 +1731,92 @@ export type GetUserSuspenseQueryHookResult = ReturnType<
 export type GetUserQueryResult = Apollo.QueryResult<
   GetUserQuery,
   GetUserQueryVariables
+>;
+export const GetUserDataDocument = gql`
+  query GetUserData($userId: ID!) {
+    user(userId: $userId) {
+      id
+      email
+      profile {
+        first_name
+        last_name
+        avatar
+      }
+    }
+  }
+`;
+
+/**
+ * __useGetUserDataQuery__
+ *
+ * To run a query within a React component, call `useGetUserDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserDataQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useGetUserDataQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetUserDataQuery,
+    GetUserDataQueryVariables
+  > &
+    (
+      | { variables: GetUserDataQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    )
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetUserDataQuery, GetUserDataQueryVariables>(
+    GetUserDataDocument,
+    options
+  );
+}
+export function useGetUserDataLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetUserDataQuery,
+    GetUserDataQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetUserDataQuery, GetUserDataQueryVariables>(
+    GetUserDataDocument,
+    options
+  );
+}
+export function useGetUserDataSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetUserDataQuery,
+        GetUserDataQueryVariables
+      >
+) {
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetUserDataQuery, GetUserDataQueryVariables>(
+    GetUserDataDocument,
+    options
+  );
+}
+export type GetUserDataQueryHookResult = ReturnType<typeof useGetUserDataQuery>;
+export type GetUserDataLazyQueryHookResult = ReturnType<
+  typeof useGetUserDataLazyQuery
+>;
+export type GetUserDataSuspenseQueryHookResult = ReturnType<
+  typeof useGetUserDataSuspenseQuery
+>;
+export type GetUserDataQueryResult = Apollo.QueryResult<
+  GetUserDataQuery,
+  GetUserDataQueryVariables
 >;
 export const GetDepartmentsDocument = gql`
   query getDepartments {
@@ -1559,91 +2084,99 @@ export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<
   UpdateUserMutation,
   UpdateUserMutationVariables
 >;
-export const GetUserSkillsDocument = gql`
-  query getUserSkills($userId: ID!) {
-    profile(userId: $userId) {
-      id
-      skills {
-        name
-        categoryId
-        mastery
-        __typename
-      }
-    }
+export const UploadAvatarDocument = gql`
+  mutation UploadAvatar($avatar: UploadAvatarInput!) {
+    uploadAvatar(avatar: $avatar)
   }
 `;
+export type UploadAvatarMutationFn = Apollo.MutationFunction<
+  UploadAvatarMutation,
+  UploadAvatarMutationVariables
+>;
 
 /**
- * __useGetUserSkillsQuery__
+ * __useUploadAvatarMutation__
  *
- * To run a query within a React component, call `useGetUserSkillsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUserSkillsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
+ * To run a mutation, you first call `useUploadAvatarMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadAvatarMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
  *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const { data, loading, error } = useGetUserSkillsQuery({
+ * const [uploadAvatarMutation, { data, loading, error }] = useUploadAvatarMutation({
  *   variables: {
- *      userId: // value for 'userId'
+ *      avatar: // value for 'avatar'
  *   },
  * });
  */
-export function useGetUserSkillsQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    GetUserSkillsQuery,
-    GetUserSkillsQueryVariables
-  > &
-    (
-      | { variables: GetUserSkillsQueryVariables; skip?: boolean }
-      | { skip: boolean }
-    )
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetUserSkillsQuery, GetUserSkillsQueryVariables>(
-    GetUserSkillsDocument,
-    options
-  );
-}
-export function useGetUserSkillsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetUserSkillsQuery,
-    GetUserSkillsQueryVariables
+export function useUploadAvatarMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UploadAvatarMutation,
+    UploadAvatarMutationVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GetUserSkillsQuery, GetUserSkillsQueryVariables>(
-    GetUserSkillsDocument,
-    options
-  );
+  return Apollo.useMutation<
+    UploadAvatarMutation,
+    UploadAvatarMutationVariables
+  >(UploadAvatarDocument, options);
 }
-export function useGetUserSkillsSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
-        GetUserSkillsQuery,
-        GetUserSkillsQueryVariables
-      >
+export type UploadAvatarMutationHookResult = ReturnType<
+  typeof useUploadAvatarMutation
+>;
+export type UploadAvatarMutationResult =
+  Apollo.MutationResult<UploadAvatarMutation>;
+export type UploadAvatarMutationOptions = Apollo.BaseMutationOptions<
+  UploadAvatarMutation,
+  UploadAvatarMutationVariables
+>;
+export const DeleteAvatarDocument = gql`
+  mutation deleteAvatar($avatar: DeleteAvatarInput!) {
+    deleteAvatar(avatar: $avatar)
+  }
+`;
+export type DeleteAvatarMutationFn = Apollo.MutationFunction<
+  DeleteAvatarMutation,
+  DeleteAvatarMutationVariables
+>;
+
+/**
+ * __useDeleteAvatarMutation__
+ *
+ * To run a mutation, you first call `useDeleteAvatarMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteAvatarMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteAvatarMutation, { data, loading, error }] = useDeleteAvatarMutation({
+ *   variables: {
+ *      avatar: // value for 'avatar'
+ *   },
+ * });
+ */
+export function useDeleteAvatarMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteAvatarMutation,
+    DeleteAvatarMutationVariables
+  >
 ) {
-  const options =
-    baseOptions === Apollo.skipToken
-      ? baseOptions
-      : { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    GetUserSkillsQuery,
-    GetUserSkillsQueryVariables
-  >(GetUserSkillsDocument, options);
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeleteAvatarMutation,
+    DeleteAvatarMutationVariables
+  >(DeleteAvatarDocument, options);
 }
-export type GetUserSkillsQueryHookResult = ReturnType<
-  typeof useGetUserSkillsQuery
+export type DeleteAvatarMutationHookResult = ReturnType<
+  typeof useDeleteAvatarMutation
 >;
-export type GetUserSkillsLazyQueryHookResult = ReturnType<
-  typeof useGetUserSkillsLazyQuery
->;
-export type GetUserSkillsSuspenseQueryHookResult = ReturnType<
-  typeof useGetUserSkillsSuspenseQuery
->;
-export type GetUserSkillsQueryResult = Apollo.QueryResult<
-  GetUserSkillsQuery,
-  GetUserSkillsQueryVariables
+export type DeleteAvatarMutationResult =
+  Apollo.MutationResult<DeleteAvatarMutation>;
+export type DeleteAvatarMutationOptions = Apollo.BaseMutationOptions<
+  DeleteAvatarMutation,
+  DeleteAvatarMutationVariables
 >;

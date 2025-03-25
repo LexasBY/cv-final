@@ -1,74 +1,83 @@
 import { gql } from "@apollo/client";
 
 export const GET_USER_SKILLS = gql`
-  query getUserSkills($userId: ID!) {
+  query ProfileSkills($userId: ID!) {
     profile(userId: $userId) {
       id
       skills {
         name
-        categoryId
         mastery
+        categoryId
       }
     }
   }
 `;
 
 export const GET_SKILLS = gql`
-  query getSkills {
+  query Skills {
     skills {
       id
       name
-      categoryId
+      category {
+        id
+      }
     }
   }
 `;
 
 export const GET_SKILL_CATEGORIES = gql`
-  query getSkillCategories {
+  query SkillCategories {
     skillCategories {
       id
       name
+      order
+      parent {
+        id
+        name
+      }
+      children {
+        id
+        name
+        order
+      }
     }
   }
 `;
 
 export const ADD_PROFILE_SKILL = gql`
-  mutation addProfileSkill($skill: ProfileSkillInput!) {
+  mutation AddProfileSkill($skill: AddProfileSkillInput!) {
     addProfileSkill(skill: $skill) {
       id
       skills {
-        id
         name
-        categoryId
         mastery
+        categoryId
       }
     }
   }
 `;
 
 export const UPDATE_PROFILE_SKILL = gql`
-  mutation updateProfileSkill($skill: ProfileSkillInput!) {
+  mutation UpdateProfileSkill($skill: UpdateProfileSkillInput!) {
     updateProfileSkill(skill: $skill) {
       id
       skills {
-        id
         name
-        categoryId
         mastery
+        categoryId
       }
     }
   }
 `;
 
 export const DELETE_PROFILE_SKILL = gql`
-  mutation deleteProfileSkill($skill: ProfileSkillInput!) {
+  mutation DeleteProfileSkill($skill: DeleteProfileSkillInput!) {
     deleteProfileSkill(skill: $skill) {
       id
       skills {
-        id
         name
-        categoryId
         mastery
+        categoryId
       }
     }
   }
