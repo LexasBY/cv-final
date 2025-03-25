@@ -17,10 +17,8 @@ import { Link } from "react-router-dom";
 import { ChevronRight } from "@mui/icons-material";
 
 import { useUserProfile } from "../model/useUserProfile";
-import { SkillsList } from "./SkillsList";
-import { useUserSkills } from "../model/useUserSkills";
 import { AvatarDropzone } from "../model/AvatarDropzone";
-
+import { SkillsPage } from "../../../features/Skills/ui/SkillsPage";
 export const ProfilePage: React.FC = () => {
   const {
     user,
@@ -44,11 +42,6 @@ export const ProfilePage: React.FC = () => {
   } = useUserProfile();
 
   const [tabIndex, setTabIndex] = useState(0);
-  const {
-    skills,
-    loading: skillsLoading,
-    error: skillsError,
-  } = useUserSkills(user?.id, tabIndex === 1);
 
   if (loading) {
     return (
@@ -247,14 +240,7 @@ export const ProfilePage: React.FC = () => {
 
       {tabIndex === 1 && (
         <Box>
-          <Typography variant="h6" mb={2}>
-            Skills
-          </Typography>
-          <SkillsList
-            skills={skills}
-            loading={skillsLoading}
-            error={skillsError}
-          />
+          <SkillsPage userId={user.id} />
         </Box>
       )}
 

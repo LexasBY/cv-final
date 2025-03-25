@@ -583,6 +583,8 @@ export type SkillCategory = {
 };
 
 export type SkillMastery = {
+  category_name: string;
+  category_parent_name: string;
   __typename?: "SkillMastery";
   categoryId?: Maybe<Scalars["ID"]["output"]>;
   mastery: Mastery;
