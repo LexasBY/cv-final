@@ -25,7 +25,7 @@ export const GET_USER = gql`
 `;
 
 export const GET_USERDATA = gql`
-  query GetUser($userId: ID!) {
+  query GetUserData($userId: ID!) {
     user(userId: $userId) {
       id
       email
