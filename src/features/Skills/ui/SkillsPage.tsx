@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { CircularProgress, Typography } from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { useQuery, useMutation } from "@apollo/client";
+import { useParams } from "react-router-dom";
 
 import {
   GET_USER_SKILLS,
@@ -21,11 +22,8 @@ import {
   Mastery,
 } from "../../../shared/api/graphql/generated";
 
-type SkillsPageProps = {
-  userId: string;
-};
-
-export const SkillsPage: React.FC<SkillsPageProps> = ({ userId }) => {
+export const SkillsPage: React.FC = () => {
+  const { userId } = useParams<{ userId: string }>();
   const [openAdd, setOpenAdd] = useState(false);
   const [selectedSkill, setSelectedSkill] = useState<SkillMastery | null>(null);
   const [skillsToDelete, setSkillsToDelete] = useState<string[]>([]);
@@ -36,7 +34,10 @@ export const SkillsPage: React.FC<SkillsPageProps> = ({ userId }) => {
     loading: skillsLoading,
     error: skillsError,
     refetch: refetchSkills,
-  } = useQuery(GET_USER_SKILLS, { variables: { userId } });
+  } = useQuery(GET_USER_SKILLS, {
+    variables: { userId },
+    skip: !userId,
+  });
 
   const {
     data: categoriesData,
@@ -57,7 +58,7 @@ export const SkillsPage: React.FC<SkillsPageProps> = ({ userId }) => {
   const currentUserId = localStorage.getItem("userId");
   const isOwner = userId === currentUserId;
 
-  if (skillsLoading || categoriesLoading || allSkillsLoading) {
+  if (skillsLoading || categoriesLoading || allSkillsLoading || !userId) {
     return <CircularProgress />;
   }
 
@@ -160,7 +161,7 @@ export const SkillsPage: React.FC<SkillsPageProps> = ({ userId }) => {
   );
 
   return (
-    <>
+    <Box sx={{ px: 4, py: 3, mx: "auto", maxWidth: 1200 }}>
       <SkillsList
         skills={skillsData.profile.skills}
         allSkills={allSkillsData.skills}
@@ -204,6 +205,6 @@ export const SkillsPage: React.FC<SkillsPageProps> = ({ userId }) => {
           onConfirm={handleUpdateSkill}
         />
       )}
-    </>
+    </Box>
   );
 };

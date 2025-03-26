@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Typography,
-  Button,
-  Tab,
   Tabs,
+  Tab,
   CircularProgress,
   Grid,
   TextField,
@@ -12,14 +11,25 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Button,
 } from "@mui/material";
-import { Link } from "react-router-dom";
 import { ChevronRight } from "@mui/icons-material";
+import {
+  Link,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 
 import { useUserProfile } from "../model/useUserProfile";
 import { AvatarDropzone } from "../model/AvatarDropzone";
-import { SkillsPage } from "../../../features/Skills/ui/SkillsPage";
+
 export const ProfilePage: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { userId } = useParams();
+
   const {
     user,
     loading,
@@ -41,7 +51,16 @@ export const ProfilePage: React.FC = () => {
     handleAvatarRemove,
   } = useUserProfile();
 
-  const [tabIndex, setTabIndex] = useState(0);
+  const tabRoutes = [
+    `/users/${userId}`,
+    `/users/${userId}/skills`,
+    `/users/${userId}/languages`,
+  ];
+  const currentTab = tabRoutes.findIndex((path) => location.pathname === path);
+
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    navigate(tabRoutes[newValue]);
+  };
 
   if (loading) {
     return (
@@ -57,10 +76,6 @@ export const ProfilePage: React.FC = () => {
   }
 
   if (error || !user) return <Box>Error fetching user</Box>;
-
-  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-    setTabIndex(newValue);
-  };
 
   const joinedDate = new Date(parseInt(user.created_at, 10)).toDateString();
   const canUpdate = isEditable && hasChanges;
@@ -87,13 +102,13 @@ export const ProfilePage: React.FC = () => {
         <Typography variant="body2" sx={{ fontWeight: "bold" }}>
           {user.profile.first_name} {user.profile.last_name}
         </Typography>
-        {tabIndex !== 0 && (
+        {currentTab > 0 && (
           <>
             <Typography variant="body2" color="text.secondary">
               <ChevronRight />
             </Typography>
             <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-              {tabIndex === 1 ? "Skills" : "Languages"}
+              {currentTab === 1 ? "Skills" : "Languages"}
             </Typography>
           </>
         )}
@@ -101,16 +116,17 @@ export const ProfilePage: React.FC = () => {
 
       {/* Табы */}
       <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
-        <Tabs value={tabIndex} onChange={handleTabChange}>
+        <Tabs value={currentTab} onChange={handleTabChange}>
           <Tab label="PROFILE" />
           <Tab label="SKILLS" />
           <Tab label="LANGUAGES" />
         </Tabs>
       </Box>
 
-      {tabIndex === 0 && (
+      {/* Контент */}
+      {currentTab === 0 ? (
         <Box>
-          {/* Центрированный блок аватара и загрузки */}
+          {/* Аватар */}
           <Box display="flex" justifyContent="center" mb={4}>
             <AvatarDropzone
               avatarUrl={user.profile.avatar}
@@ -121,7 +137,7 @@ export const ProfilePage: React.FC = () => {
             />
           </Box>
 
-          {/* Информация */}
+          {/* Инфо */}
           <Typography variant="h5" mt={2} align="center">
             {user.profile.first_name} {user.profile.last_name}
           </Typography>
@@ -137,7 +153,7 @@ export const ProfilePage: React.FC = () => {
             A member since {joinedDate}
           </Typography>
 
-          {/* Поля профиля */}
+          {/* Поля */}
           <Box maxWidth={900} mx="auto" mt={3}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
@@ -166,7 +182,7 @@ export const ProfilePage: React.FC = () => {
                     <InputLabel>Department</InputLabel>
                     <Select
                       label="Department"
-                      value={displayDepartment || ""}
+                      value={displayDepartment}
                       onChange={(e) =>
                         setDepartmentId(e.target.value as string)
                       }
@@ -197,7 +213,7 @@ export const ProfilePage: React.FC = () => {
                     <InputLabel>Position</InputLabel>
                     <Select
                       label="Position"
-                      value={displayPosition || ""}
+                      value={displayPosition}
                       onChange={(e) => setPositionId(e.target.value as string)}
                     >
                       <MenuItem value="" disabled hidden>
@@ -236,23 +252,8 @@ export const ProfilePage: React.FC = () => {
             )}
           </Box>
         </Box>
-      )}
-
-      {tabIndex === 1 && (
-        <Box>
-          <SkillsPage userId={user.id} />
-        </Box>
-      )}
-
-      {tabIndex === 2 && (
-        <Box>
-          <Typography variant="h6" mb={2}>
-            Languages
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Languages...
-          </Typography>
-        </Box>
+      ) : (
+        <Outlet />
       )}
     </Box>
   );
