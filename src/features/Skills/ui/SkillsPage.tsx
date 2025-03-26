@@ -8,6 +8,7 @@ import {
   GET_SKILLS,
   ADD_PROFILE_SKILL,
   UPDATE_PROFILE_SKILL,
+  DELETE_PROFILE_SKILL,
 } from "../../../shared/api/user/skills.api";
 
 import { SkillsList } from "./SkillsList";
@@ -27,15 +28,15 @@ type SkillsPageProps = {
 export const SkillsPage: React.FC<SkillsPageProps> = ({ userId }) => {
   const [openAdd, setOpenAdd] = useState(false);
   const [selectedSkill, setSelectedSkill] = useState<SkillMastery | null>(null);
+  const [skillsToDelete, setSkillsToDelete] = useState<string[]>([]);
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
 
   const {
     data: skillsData,
     loading: skillsLoading,
     error: skillsError,
     refetch: refetchSkills,
-  } = useQuery(GET_USER_SKILLS, {
-    variables: { userId },
-  });
+  } = useQuery(GET_USER_SKILLS, { variables: { userId } });
 
   const {
     data: categoriesData,
@@ -51,6 +52,10 @@ export const SkillsPage: React.FC<SkillsPageProps> = ({ userId }) => {
 
   const [addSkill] = useMutation(ADD_PROFILE_SKILL);
   const [updateSkill] = useMutation(UPDATE_PROFILE_SKILL);
+  const [deleteSkill] = useMutation(DELETE_PROFILE_SKILL);
+
+  const currentUserId = localStorage.getItem("userId");
+  const isOwner = userId === currentUserId;
 
   if (skillsLoading || categoriesLoading || allSkillsLoading) {
     return <CircularProgress />;
@@ -67,7 +72,11 @@ export const SkillsPage: React.FC<SkillsPageProps> = ({ userId }) => {
   const handleOpenAdd = () => setOpenAdd(true);
   const handleCloseAdd = () => setOpenAdd(false);
 
-  const handleOpenUpdate = (skill: SkillMastery) => setSelectedSkill(skill);
+  const handleOpenUpdate = (skill: SkillMastery) => {
+    if (!isOwner) return;
+    setSelectedSkill(skill);
+  };
+
   const handleCloseUpdate = () => setSelectedSkill(null);
 
   const handleAddSkill = async (skillName: string, mastery: Mastery) => {
@@ -122,6 +131,34 @@ export const SkillsPage: React.FC<SkillsPageProps> = ({ userId }) => {
     }
   };
 
+  const handleDeleteSkills = async () => {
+    try {
+      for (const name of skillsToDelete) {
+        await deleteSkill({
+          variables: {
+            skill: {
+              userId,
+              name,
+            },
+          },
+        });
+      }
+      await refetchSkills();
+    } catch (error) {
+      console.error("Failed to delete skills:", error);
+    } finally {
+      setIsDeleteMode(false);
+      setSkillsToDelete([]);
+    }
+  };
+
+  const existingNames = skillsData.profile.skills.map(
+    (s: SkillMastery) => s.name
+  );
+  const availableSkillsToAdd = allSkillsData.skills.filter(
+    (s: SkillMastery) => !existingNames.includes(s.name)
+  );
+
   return (
     <>
       <SkillsList
@@ -132,14 +169,31 @@ export const SkillsPage: React.FC<SkillsPageProps> = ({ userId }) => {
         error={null}
         onAdd={handleOpenAdd}
         onEdit={handleOpenUpdate}
+        isDeleteMode={isDeleteMode}
+        selectedForDelete={skillsToDelete}
+        onToggleDeleteMode={() => {
+          setIsDeleteMode((prev) => !prev);
+          setSkillsToDelete([]);
+        }}
+        onToggleSkillDelete={(name) => {
+          setSkillsToDelete((prev) =>
+            prev.includes(name)
+              ? prev.filter((n) => n !== name)
+              : [...prev, name]
+          );
+        }}
+        onConfirmDelete={handleDeleteSkills}
+        isOwner={isOwner}
       />
 
-      <AddSkillModal
-        open={openAdd}
-        onClose={handleCloseAdd}
-        skills={allSkillsData.skills}
-        onConfirm={handleAddSkill}
-      />
+      {isOwner && (
+        <AddSkillModal
+          open={openAdd}
+          onClose={handleCloseAdd}
+          skills={availableSkillsToAdd}
+          onConfirm={handleAddSkill}
+        />
+      )}
 
       {selectedSkill && (
         <UpdateSkillModal

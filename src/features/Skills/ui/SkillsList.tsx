@@ -22,6 +22,12 @@ type SkillsListProps = {
   error: unknown;
   onAdd: () => void;
   onEdit: (skill: SkillMastery) => void;
+  isDeleteMode: boolean;
+  selectedForDelete: string[];
+  onToggleDeleteMode: () => void;
+  onToggleSkillDelete: (skillName: string) => void;
+  onConfirmDelete: () => void;
+  isOwner: boolean;
 };
 
 const masteryColors: Record<Mastery, string> = {
@@ -47,6 +53,12 @@ export const SkillsList: React.FC<SkillsListProps> = ({
   error,
   onAdd,
   onEdit,
+  isDeleteMode,
+  selectedForDelete,
+  onToggleDeleteMode,
+  onToggleSkillDelete,
+  onConfirmDelete,
+  isOwner,
 }) => {
   if (loading) return <CircularProgress />;
   if (error) return <Typography color="error">Error loading skills</Typography>;
@@ -58,21 +70,14 @@ export const SkillsList: React.FC<SkillsListProps> = ({
     },
     {}
   );
-  console.log("categoryMap", categoryMap);
 
   const groupedByParent: Record<string, SkillMastery[]> = {};
-  console.log("groupedByParent", groupedByParent);
-
   skills.forEach((skill) => {
     const categoryId = skill.categoryId ?? undefined;
-    console.log("skill", skill);
-    console.log("categoryId", categoryId);
     const category = categoryId ? categoryMap[categoryId] : undefined;
-    console.log("category", category);
     const parentCategory = category?.parent
       ? categoryMap[category.parent.id]
       : category;
-
     const parentName = parentCategory?.name || "Other";
 
     if (!groupedByParent[parentName]) {
@@ -82,13 +87,7 @@ export const SkillsList: React.FC<SkillsListProps> = ({
     groupedByParent[parentName].push(skill);
   });
 
-  if (!skills.length) {
-    return (
-      <Box display="flex" justifyContent="center" mt={4}>
-        <SkillsActions hasSkills={false} onAdd={onAdd} onRemove={() => {}} />
-      </Box>
-    );
-  }
+  const isSelected = (name: string) => selectedForDelete.includes(name);
 
   return (
     <Box>
@@ -104,24 +103,41 @@ export const SkillsList: React.FC<SkillsListProps> = ({
                   display="flex"
                   alignItems="center"
                   gap={4}
-                  onClick={() => onEdit(skill)}
-                  sx={{ cursor: "pointer" }}
+                  onClick={() =>
+                    isDeleteMode
+                      ? onToggleSkillDelete(skill.name)
+                      : isOwner && onEdit(skill)
+                  }
+                  sx={{ cursor: isOwner ? "pointer" : "default" }}
                 >
                   <Box flexGrow={1}>
                     <LinearProgress
                       variant="determinate"
-                      value={masteryValues[skill.mastery]}
+                      value={
+                        isSelected(skill.name)
+                          ? 0
+                          : masteryValues[skill.mastery]
+                      }
                       sx={{
                         height: 4,
                         borderRadius: 3,
                         backgroundColor: "#444",
                         "& .MuiLinearProgress-bar": {
-                          backgroundColor: masteryColors[skill.mastery],
+                          backgroundColor: isSelected(skill.name)
+                            ? "#888"
+                            : masteryColors[skill.mastery],
                         },
                       }}
                     />
                   </Box>
-                  <Typography sx={{ minWidth: 100 }}>{skill.name}</Typography>
+                  <Typography
+                    sx={{
+                      minWidth: 100,
+                      color: isSelected(skill.name) ? "#fff" : "inherit",
+                    }}
+                  >
+                    {skill.name}
+                  </Typography>
                 </Box>
               </Grid>
             ))}
@@ -129,9 +145,19 @@ export const SkillsList: React.FC<SkillsListProps> = ({
         </Box>
       ))}
 
-      <Box mt={4}>
-        <SkillsActions hasSkills={true} onAdd={onAdd} onRemove={() => {}} />
-      </Box>
+      {isOwner && (
+        <Box mt={4}>
+          <SkillsActions
+            hasSkills={skills.length > 0}
+            isDeleteMode={isDeleteMode}
+            deleteCount={selectedForDelete.length}
+            onAdd={onAdd}
+            onRemove={onToggleDeleteMode}
+            onDeleteCancel={onToggleDeleteMode}
+            onDeleteConfirm={onConfirmDelete}
+          />
+        </Box>
+      )}
     </Box>
   );
 };

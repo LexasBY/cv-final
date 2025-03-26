@@ -46,8 +46,9 @@ export const AddSkillModal: React.FC<AddSkillModalProps> = ({
         sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 2 }}
       >
         <FormControl fullWidth>
-          <InputLabel>Skill</InputLabel>
+          <InputLabel id="skill-label">Skill</InputLabel>
           <Select
+            labelId="skill-label"
             value={selectedSkill}
             label="Skill"
             onChange={handleSkillChange}
@@ -61,8 +62,9 @@ export const AddSkillModal: React.FC<AddSkillModalProps> = ({
         </FormControl>
 
         <FormControl fullWidth>
-          <InputLabel>Skill mastery</InputLabel>
+          <InputLabel id="mastery-label">Skill mastery</InputLabel>
           <Select
+            labelId="mastery-label"
             value={selectedMastery}
             label="Skill mastery"
             onChange={(e) => setSelectedMastery(e.target.value as Mastery)}

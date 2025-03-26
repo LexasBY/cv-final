@@ -253,11 +253,11 @@ export type MarginInput = {
 };
 
 export enum Mastery {
-  Advanced = "Advanced",
-  Competent = "Competent",
-  Expert = "Expert",
   Novice = "Novice",
+  Competent = "Competent",
   Proficient = "Proficient",
+  Advanced = "Advanced",
+  Expert = "Expert",
 }
 
 export type Mutation = {
