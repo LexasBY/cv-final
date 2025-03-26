@@ -75,15 +75,16 @@ export const UsersPage = () => {
         open={Boolean(menuAnchor)}
         onClose={handleMenuClose}
       >
-        {selectedUser && (
-          <>
-            <MenuItem onClick={() => navigate(`/users/${selectedUser.id}`)}>
-              Profile
-            </MenuItem>
-            <MenuItem>Update User</MenuItem>
-            <MenuItem>Delete User</MenuItem>
-          </>
-        )}
+        {selectedUser && [
+          <MenuItem
+            key="profile"
+            onClick={() => navigate(`/users/${selectedUser.id}/profile`)}
+          >
+            Profile
+          </MenuItem>,
+          <MenuItem key="update">Update User</MenuItem>,
+          <MenuItem key="delete">Delete User</MenuItem>,
+        ]}
       </Menu>
     </Box>
   );
