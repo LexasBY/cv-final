@@ -4,10 +4,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import {
   TextField,
   Button,
-  Box,
   Typography,
   IconButton,
   InputAdornment,
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  FormHelperText,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -40,10 +43,10 @@ export const AuthForm = ({ type }: AuthFormProps) => {
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
   return (
-    <Box
-      component="form"
+    <form
       onSubmit={handleSubmit(onSubmit)}
-      sx={{
+      autoComplete="on"
+      style={{
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -56,6 +59,7 @@ export const AuthForm = ({ type }: AuthFormProps) => {
       >
         {type === "login" ? "Welcome back" : "Register now"}
       </Typography>
+
       <Typography
         variant="body1"
         sx={{ mb: 3, color: "gray", textAlign: "center" }}
@@ -67,33 +71,40 @@ export const AuthForm = ({ type }: AuthFormProps) => {
 
       <TextField
         label="Email"
+        type="email"
+        autoComplete="username"
         {...register("email")}
         error={!!errors.email}
         helperText={errors.email?.message}
         fullWidth
         sx={{ mb: 2 }}
-        autoComplete="email"
       />
 
-      <TextField
-        label="Password"
-        type={showPassword ? "text" : "password"}
-        {...register("password")}
-        error={!!errors.password}
-        helperText={errors.password?.message}
+      <FormControl
         fullWidth
+        variant="outlined"
+        error={!!errors.password}
         sx={{ mb: 2 }}
-        autoComplete="current-password"
-        InputProps={{
-          endAdornment: (
+      >
+        <InputLabel htmlFor="password-input">Password</InputLabel>
+        <OutlinedInput
+          id="password-input"
+          label="Password"
+          type={showPassword ? "text" : "password"}
+          autoComplete={type === "login" ? "current-password" : "new-password"}
+          {...register("password")}
+          endAdornment={
             <InputAdornment position="end">
               <IconButton onClick={togglePasswordVisibility} edge="end">
                 {showPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>
-          ),
-        }}
-      />
+          }
+        />
+        {errors.password && (
+          <FormHelperText>{errors.password.message}</FormHelperText>
+        )}
+      </FormControl>
 
       <Button
         type="submit"
@@ -132,6 +143,6 @@ export const AuthForm = ({ type }: AuthFormProps) => {
       >
         {type === "login" ? "FORGOT PASSWORD" : "I HAVE AN ACCOUNT"}
       </Typography>
-    </Box>
+    </form>
   );
 };
