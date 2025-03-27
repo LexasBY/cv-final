@@ -1,6 +1,12 @@
-import React, { useState } from "react";
-import { Box, CircularProgress, Typography } from "@mui/material";
-import { useQuery, useMutation } from "@apollo/client";
+import React, { useState, useMemo } from "react";
+import {
+  Box,
+  CircularProgress,
+  Typography,
+  Snackbar,
+  Alert,
+} from "@mui/material";
+import { useQuery, useMutation, ApolloCache } from "@apollo/client";
 import { useParams } from "react-router-dom";
 
 import {
@@ -13,14 +19,32 @@ import {
 } from "../../../shared/api/user/skills.api";
 
 import { SkillsList } from "./SkillsList";
-import { AddSkillModal } from "./AddSkillModal";
-import { UpdateSkillModal } from "./UpdateSkillModal";
-
+import { GenericModal } from "../../../shared/api/ui/GenericModal";
 import {
   Skill,
   SkillMastery,
   Mastery,
 } from "../../../shared/api/graphql/generated";
+
+interface UserProfile {
+  skills: SkillMastery[];
+}
+
+interface UserSkillsData {
+  profile: UserProfile;
+}
+
+interface AddProfileSkillResponse {
+  addProfileSkill: SkillMastery;
+}
+
+interface UpdateProfileSkillResponse {
+  updateProfileSkill: SkillMastery;
+}
+
+interface DeleteProfileSkillResponse {
+  deleteProfileSkill: SkillMastery;
+}
 
 export const SkillsPage: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -28,59 +52,153 @@ export const SkillsPage: React.FC = () => {
   const [selectedSkill, setSelectedSkill] = useState<SkillMastery | null>(null);
   const [skillsToDelete, setSkillsToDelete] = useState<string[]>([]);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: "error" | "success";
+  }>({ open: false, message: "", severity: "error" });
 
   const {
     data: skillsData,
     loading: skillsLoading,
     error: skillsError,
-    refetch: refetchSkills,
-  } = useQuery(GET_USER_SKILLS, {
+  } = useQuery<UserSkillsData>(GET_USER_SKILLS, {
     variables: { userId },
     skip: !userId,
   });
-
   const {
     data: categoriesData,
     loading: categoriesLoading,
     error: categoriesError,
   } = useQuery(GET_SKILL_CATEGORIES);
-
   const {
     data: allSkillsData,
     loading: allSkillsLoading,
     error: allSkillsError,
   } = useQuery(GET_SKILLS);
 
-  const [addSkill] = useMutation(ADD_PROFILE_SKILL);
-  const [updateSkill] = useMutation(UPDATE_PROFILE_SKILL);
-  const [deleteSkill] = useMutation(DELETE_PROFILE_SKILL);
+  const [addSkill] = useMutation<
+    AddProfileSkillResponse,
+    {
+      skill: {
+        userId: string;
+        name: string;
+        mastery: Mastery;
+        categoryId?: string;
+      };
+    }
+  >(ADD_PROFILE_SKILL, {
+    update: (cache: ApolloCache<AddProfileSkillResponse>, { data }) => {
+      if (!data) return;
+      const addedSkill = data.addProfileSkill;
+      const existing = cache.readQuery<UserSkillsData>({
+        query: GET_USER_SKILLS,
+        variables: { userId },
+      });
+      if (existing) {
+        cache.writeQuery({
+          query: GET_USER_SKILLS,
+          variables: { userId },
+          data: {
+            profile: {
+              ...existing.profile,
+              skills: [...existing.profile.skills, addedSkill],
+            },
+          },
+        });
+      }
+    },
+  });
+
+  const [updateSkill] = useMutation<
+    UpdateProfileSkillResponse,
+    {
+      skill: {
+        userId: string;
+        name: string;
+        mastery: Mastery;
+        categoryId?: string;
+      };
+    }
+  >(UPDATE_PROFILE_SKILL, {
+    update: (cache: ApolloCache<UpdateProfileSkillResponse>, { data }) => {
+      if (!data) return;
+      const updatedSkill = data.updateProfileSkill;
+      const existing = cache.readQuery<UserSkillsData>({
+        query: GET_USER_SKILLS,
+        variables: { userId },
+      });
+      if (existing) {
+        cache.writeQuery({
+          query: GET_USER_SKILLS,
+          variables: { userId },
+          data: {
+            profile: {
+              ...existing.profile,
+              skills: existing.profile.skills.map((s: SkillMastery) =>
+                s.name === updatedSkill.name ? updatedSkill : s
+              ),
+            },
+          },
+        });
+      }
+    },
+  });
+
+  const [deleteSkill] = useMutation<
+    DeleteProfileSkillResponse,
+    { skill: { userId: string; name: string } }
+  >(DELETE_PROFILE_SKILL, {
+    update: (cache: ApolloCache<DeleteProfileSkillResponse>, { data }) => {
+      if (!data) return;
+      const deletedSkill = data.deleteProfileSkill;
+      const existing = cache.readQuery<UserSkillsData>({
+        query: GET_USER_SKILLS,
+        variables: { userId },
+      });
+      if (existing) {
+        cache.writeQuery({
+          query: GET_USER_SKILLS,
+          variables: { userId },
+          data: {
+            profile: {
+              ...existing.profile,
+              skills: existing.profile.skills.filter(
+                (s: SkillMastery) => s.name !== deletedSkill.name
+              ),
+            },
+          },
+        });
+      }
+    },
+  });
 
   const currentUserId = localStorage.getItem("userId");
   const isOwner = userId === currentUserId;
 
-  if (skillsLoading || categoriesLoading || allSkillsLoading || !userId) {
+  const availableSkillsToAdd = useMemo(() => {
+    if (!skillsData || !allSkillsData) return [];
+    const existingNames = skillsData.profile.skills.map((s) => s.name);
+    return allSkillsData.skills.filter(
+      (s: Skill) => !existingNames.includes(s.name)
+    );
+  }, [skillsData, allSkillsData]);
+
+  const masteryOptions = useMemo(() => {
+    return Object.values(Mastery).map((m) => ({
+      label: m,
+      value: m,
+    }));
+  }, []);
+
+  if (skillsLoading || categoriesLoading || allSkillsLoading || !userId)
     return <CircularProgress />;
-  }
-
-  if (skillsError || categoriesError || allSkillsError) {
+  if (skillsError || categoriesError || allSkillsError)
     return <Typography color="error">Error loading data</Typography>;
-  }
-
-  if (!skillsData?.profile || !categoriesData || !allSkillsData) {
+  if (!skillsData?.profile || !categoriesData || !allSkillsData)
     return <Typography color="error">No profile data found</Typography>;
-  }
 
-  const handleOpenAdd = () => setOpenAdd(true);
-  const handleCloseAdd = () => setOpenAdd(false);
-
-  const handleOpenUpdate = (skill: SkillMastery) => {
-    if (!isOwner) return;
-    setSelectedSkill(skill);
-  };
-
-  const handleCloseUpdate = () => setSelectedSkill(null);
-
-  const handleAddSkill = async (skillName: string, mastery: Mastery) => {
+  const handleAddSkill = async (skillName: string, mastery: string) => {
     const fullSkill = allSkillsData.skills.find(
       (s: Skill) => s.name === skillName
     );
@@ -92,22 +210,30 @@ export const SkillsPage: React.FC = () => {
           skill: {
             userId,
             name: skillName,
-            mastery,
+            mastery: mastery as Mastery,
             categoryId,
           },
         },
       });
-      await refetchSkills();
+      setSnackbar({
+        open: true,
+        message: "Skill added successfully",
+        severity: "success",
+      });
     } catch (error) {
       console.error("Failed to add skill:", error);
+      setSnackbar({
+        open: true,
+        message: "Failed to add skill",
+        severity: "error",
+      });
     } finally {
-      handleCloseAdd();
+      setOpenAdd(false);
     }
   };
 
-  const handleUpdateSkill = async (updatedMastery: Mastery) => {
+  const handleUpdateSkill = async (mastery: string) => {
     if (!selectedSkill) return;
-
     const fullSkill = allSkillsData.skills.find(
       (s: Skill) => s.name === selectedSkill.name
     );
@@ -119,46 +245,58 @@ export const SkillsPage: React.FC = () => {
           skill: {
             userId,
             name: selectedSkill.name,
-            mastery: updatedMastery,
+            mastery: mastery as Mastery,
             categoryId,
           },
         },
       });
-      await refetchSkills();
+      setSnackbar({
+        open: true,
+        message: "Skill updated successfully",
+        severity: "success",
+      });
     } catch (error) {
       console.error("Failed to update skill:", error);
+      setSnackbar({
+        open: true,
+        message: "Failed to update skill",
+        severity: "error",
+      });
     } finally {
-      handleCloseUpdate();
+      setSelectedSkill(null);
     }
   };
 
   const handleDeleteSkills = async () => {
     try {
-      for (const name of skillsToDelete) {
-        await deleteSkill({
-          variables: {
-            skill: {
-              userId,
-              name,
-            },
-          },
-        });
-      }
-      await refetchSkills();
+      await Promise.all(
+        skillsToDelete.map((name) =>
+          deleteSkill({
+            variables: { skill: { userId, name } },
+          })
+        )
+      );
+      setSnackbar({
+        open: true,
+        message: "Skills deleted successfully",
+        severity: "success",
+      });
     } catch (error) {
       console.error("Failed to delete skills:", error);
+      setSnackbar({
+        open: true,
+        message: "Failed to delete skills",
+        severity: "error",
+      });
     } finally {
       setIsDeleteMode(false);
       setSkillsToDelete([]);
     }
   };
 
-  const existingNames = skillsData.profile.skills.map(
-    (s: SkillMastery) => s.name
-  );
-  const availableSkillsToAdd = allSkillsData.skills.filter(
-    (s: SkillMastery) => !existingNames.includes(s.name)
-  );
+  const handleCloseSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
 
   return (
     <Box sx={{ px: 4, py: 3, mx: "auto", maxWidth: 1200 }}>
@@ -168,8 +306,8 @@ export const SkillsPage: React.FC = () => {
         categories={categoriesData.skillCategories}
         loading={false}
         error={null}
-        onAdd={handleOpenAdd}
-        onEdit={handleOpenUpdate}
+        onAdd={() => setOpenAdd(true)}
+        onEdit={(skill) => isOwner && setSelectedSkill(skill)}
         isDeleteMode={isDeleteMode}
         selectedForDelete={skillsToDelete}
         onToggleDeleteMode={() => {
@@ -188,23 +326,50 @@ export const SkillsPage: React.FC = () => {
       />
 
       {isOwner && (
-        <AddSkillModal
+        <GenericModal
           open={openAdd}
-          onClose={handleCloseAdd}
-          skills={availableSkillsToAdd}
+          onClose={() => setOpenAdd(false)}
           onConfirm={handleAddSkill}
+          title="Add skill"
+          itemLabel="Skill"
+          levelLabel="Skill mastery"
+          options={availableSkillsToAdd.map((s: Skill) => ({
+            label: s.name,
+            value: s.name,
+          }))}
+          levels={masteryOptions}
         />
       )}
 
       {selectedSkill && (
-        <UpdateSkillModal
-          open={true}
-          onClose={handleCloseUpdate}
-          skillName={selectedSkill.name}
-          currentMastery={selectedSkill.mastery}
-          onConfirm={handleUpdateSkill}
+        <GenericModal
+          open
+          onClose={() => setSelectedSkill(null)}
+          onConfirm={(_, mastery) => handleUpdateSkill(mastery)}
+          title="Update skill"
+          itemLabel="Skill"
+          levelLabel="Skill mastery"
+          options={[{ label: selectedSkill.name, value: selectedSkill.name }]}
+          levels={masteryOptions}
+          disableItemSelect
+          initialItemValue={selectedSkill.name}
+          initialLevel={selectedSkill.mastery}
         />
       )}
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

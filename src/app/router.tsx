@@ -16,7 +16,7 @@ export const Router = () => (
 
     <Route element={<Layout />}>
       <Route path="/users" element={<UsersPage />} />
-      <Route path="/skills" element={<LanguagesPage />} />
+      <Route path="/skills" element={<SkillsPage />} />
       <Route path="/languages" element={<LanguagesPage />} />
       <Route path="/cvs" element={<CVsPage />} />
 
