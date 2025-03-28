@@ -28,6 +28,7 @@ export const UserProfile = ({
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
+    localStorage.removeItem("access_token");
     localStorage.removeItem("userId");
     navigate("/auth/login");
   };
