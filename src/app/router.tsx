@@ -3,11 +3,11 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "../pages/auth/ui/login";
 import RegisterPage from "../pages/auth/ui/register";
 import Layout from "./Layout";
-import LanguagesPage from "../pages/profile/LanguagesPage";
 import CVsPage from "../pages/profile/CVsPage";
 import { UsersPage } from "../pages/employees";
 import { ProfilePage } from "../pages/userProfile/ui/ProfilePage";
 import { SkillsPage } from "../features/Skills/ui/SkillsPage";
+import { LanguagesPage } from "../features/Languages/ui/LanguagesPage";
 
 export const Router = () => (
   <Routes>
@@ -16,7 +16,7 @@ export const Router = () => (
 
     <Route element={<Layout />}>
       <Route path="/users" element={<UsersPage />} />
-      <Route path="/skills" element={<LanguagesPage />} />
+      <Route path="/skills" element={<SkillsPage />} />
       <Route path="/languages" element={<LanguagesPage />} />
       <Route path="/cvs" element={<CVsPage />} />
 

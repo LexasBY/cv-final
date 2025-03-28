@@ -1,26 +1,7 @@
 import { useState, useMemo } from "react";
-import { useQuery, gql } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { User } from "../../../shared/api/graphql/generated";
-
-const GET_USERS = gql`
-  query GetUsers {
-    users {
-      id
-      email
-      profile {
-        first_name
-        last_name
-        avatar
-      }
-      department {
-        name
-      }
-      position {
-        name
-      }
-    }
-  }
-`;
+import { GET_USERS } from "../../../shared/api/user/user.api";
 
 export type SortColumn =
   | "first_name"
