@@ -24,7 +24,9 @@ import {
 import { useLanguagesMutations } from "../model/useLanguagesMutations";
 
 export const LanguagesPage: React.FC = () => {
-  const { userId } = useParams<{ userId: string }>();
+  const { userId: routeUserId } = useParams<{ userId?: string }>();
+  const userId = routeUserId ?? localStorage.getItem("userId");
+
   const [openAdd, setOpenAdd] = useState(false);
   const [selectedLanguage, setSelectedLanguage] =
     useState<LanguageProficiency | null>(null);
@@ -147,6 +149,9 @@ export const LanguagesPage: React.FC = () => {
 
   return (
     <Box sx={{ px: 4, py: 3, mx: "auto", maxWidth: 1200 }}>
+      <Typography variant="h5" sx={{ mb: 3, fontWeight: "bold" }}>
+        Languages
+      </Typography>
       <LanguagesList
         languages={profileData.profile.languages}
         onAdd={() => setOpenAdd(true)}
