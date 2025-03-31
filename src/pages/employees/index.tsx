@@ -76,13 +76,22 @@ export const UsersPage = () => {
         onClose={handleMenuClose}
       >
         {selectedUser && [
-          <MenuItem
-            key="profile"
-            onClick={() => navigate(`/users/${selectedUser.id}/profile`)}
-          >
-            Profile
-          </MenuItem>,
-          <MenuItem key="update">Update User</MenuItem>,
+          <>
+            <MenuItem
+              key="profile"
+              onClick={() => {
+                if (selectedUser?.id) {
+                  navigate(`/users/${selectedUser.id}`);
+                } else {
+                  console.warn("No selected user ID found");
+                }
+                handleMenuClose();
+              }}
+            >
+              Profile
+            </MenuItem>
+            <MenuItem key="update">Update User</MenuItem>
+          </>,
           <MenuItem key="delete">Delete User</MenuItem>,
         ]}
       </Menu>

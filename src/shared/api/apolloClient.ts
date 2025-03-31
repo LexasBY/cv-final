@@ -3,16 +3,20 @@ import {
   InMemoryCache,
   createHttpLink,
   from,
+  Observable,
+  FetchResult,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
+import { refreshAccessToken } from "../lib/auth/refreshToken";
+import { clearTokens, getAccessToken } from "../../utils/token";
 
 const httpLink = createHttpLink({
   uri: "https://cv-project-js.inno.ws/api/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem("access_token");
+  const token = getAccessToken();
   return {
     headers: {
       ...headers,
@@ -21,21 +25,41 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-const errorLink = onError(({ graphQLErrors, networkError }) => {
-  if (graphQLErrors) {
-    graphQLErrors.forEach(({ message }) => {
-      console.error(`GraphQL Error: ${message}`);
+const errorLink = onError(({ graphQLErrors, operation, forward }) => {
+  const unauth = graphQLErrors?.some((err) =>
+    err.message.toLowerCase().includes("unauthorized")
+  );
 
-      if (message.includes("Unauthorized")) {
-        localStorage.removeItem("access_token");
+  if (!unauth) return;
+
+  return new Observable<FetchResult>((observer) => {
+    refreshAccessToken()
+      .then((newToken) => {
+        if (!newToken) {
+          window.location.href = "/auth/login";
+          return;
+        }
+
+        operation.setContext(({ headers = {} }) => ({
+          headers: {
+            ...headers,
+            Authorization: `Bearer ${newToken}`,
+          },
+        }));
+
+        const subscriber = forward(operation).subscribe({
+          next: observer.next.bind(observer),
+          error: observer.error.bind(observer),
+          complete: observer.complete.bind(observer),
+        });
+
+        return () => subscriber.unsubscribe();
+      })
+      .catch(() => {
+        clearTokens();
         window.location.href = "/auth/login";
-      }
-    });
-  }
-
-  if (networkError) {
-    console.error(`Network Error: ${networkError}`);
-  }
+      });
+  });
 });
 
 export const client = new ApolloClient({
