@@ -7,7 +7,7 @@ import { UsersPage } from "../pages/employees";
 import { ProfilePage } from "../pages/userProfile/ui/ProfilePage";
 import { SkillsPage } from "../features/Skills/ui/SkillsPage";
 import { LanguagesPage } from "../features/Languages/ui/LanguagesPage";
-import { CvsPage } from "../pages/cvs/ui/cvspage";
+import { CvsPage } from "../pages/cvs/ui/CvsPage";
 
 export const Router = () => (
   <Routes>

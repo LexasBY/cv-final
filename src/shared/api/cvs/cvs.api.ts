@@ -16,6 +16,27 @@ export const GET_ALL_CVS = gql`
   }
 `;
 
+export const CREATE_CV = gql`
+  mutation CreateCv($cv: CreateCvInput!) {
+    createCv(cv: $cv) {
+      id
+      name
+      description
+      education
+      created_at
+      user {
+        id
+        email
+        profile {
+          id
+          full_name
+          avatar
+        }
+      }
+    }
+  }
+`;
+
 export const GET_CV_BY_ID = gql`
   query GetCVById($cvId: ID!) {
     cv(cvId: $cvId) {

@@ -33,8 +33,8 @@ export const CvsTable: React.FC<CvsTableProps> = ({
 }) => {
   return (
     <TableContainer
-      sx={{ maxHeight: "70vh", maxWidth: "1200px" }}
       component={Paper}
+      sx={{ maxHeight: "70vh", maxWidth: "1330px" }}
     >
       <Table stickyHeader>
         <TableHead>
@@ -73,10 +73,12 @@ export const CvsTable: React.FC<CvsTableProps> = ({
         <TableBody>
           {cvs.map((cv) => (
             <React.Fragment key={cv.id}>
-              <TableRow>
-                <TableCell>{cv.name}</TableCell>
-                <TableCell>{cv.education || "—"}</TableCell>
-                <TableCell>
+              <TableRow sx={{ "& td": { borderBottom: "none" } }}>
+                <TableCell sx={{ fontWeight: "bold" }}>{cv.name}</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>
+                  {cv.education || "—"}
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>
                   {cv.user?.profile?.full_name || cv.user?.email || "—"}
                 </TableCell>
                 <TableCell align="right" sx={{ width: "15%" }}>

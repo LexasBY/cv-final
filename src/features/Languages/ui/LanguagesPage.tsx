@@ -10,7 +10,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 
 import { LanguagesList } from "./LanguagesList";
-import { GenericModal } from "../../../shared/ui/GenericModal";
+import { GenericModal } from "../../../shared/ui/Modals/GenericModal";
 import {
   GET_ALL_LANGUAGES,
   GET_USER_LANGUAGES,

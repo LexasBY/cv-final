@@ -21,7 +21,7 @@ import {
 } from "../../../shared/api/graphql/generated";
 
 import { SkillsList } from "./SkillsList";
-import { GenericModal } from "../../../shared/ui/GenericModal";
+import { GenericModal } from "../../../shared/ui/Modals/GenericModal";
 import { useSkillsMutations } from "../model/useSkillsMutations";
 
 export const SkillsPage: React.FC = () => {
