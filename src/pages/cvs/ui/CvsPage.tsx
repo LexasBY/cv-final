@@ -1,72 +1,67 @@
 import React, { useState } from "react";
 import { Box, Typography, Menu, MenuItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useUsers } from "./model/useUsers";
-import { UsersTable } from "./ui/UsersTable";
-import { SortColumn } from "./model/useUsers";
-import { User } from "../../shared/api/graphql/generated";
-import { SearchInput } from "../../shared/ui/SearchInput";
+import { useCvs } from "../../../features/Cvs/model/useCvs";
+import { Cv } from "../../../shared/api/graphql/generated";
+import { SearchInput } from "../../../shared/ui/SearchInput";
+import { CvsTable } from "./CvsTable";
 
-export const UsersPage = () => {
+export const CvsPage: React.FC = () => {
   const navigate = useNavigate();
+
   const {
     loading,
     error,
-    sortedUsers,
+    sortedCvs,
     searchTerm,
     setSearchTerm,
     sortColumn,
     setSortColumn,
     sortDirection,
     setSortDirection,
-  } = useUsers();
+  } = useCvs();
 
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedCv, setSelectedCv] = useState<Cv | null>(null);
 
-  if (loading) return <Box>Loading...</Box>;
-  if (error) return <Box>Error fetching users</Box>;
-
-  const handleSort = (column: SortColumn) => {
+  const handleSort = (column: "name" | "education" | "employee") => {
     setSortDirection((prev) =>
       sortColumn === column ? (prev === "asc" ? "desc" : "asc") : "asc"
     );
     setSortColumn(column);
   };
 
-  const handleUserClick = (user: User) => {
-    navigate(`/users/${user.id}`);
-  };
-
   const handleMenuOpen = (
     event: React.MouseEvent<HTMLButtonElement>,
-    user: User
+    cv: Cv
   ) => {
-    setSelectedUser(user);
+    setSelectedCv(cv);
     setMenuAnchor(event.currentTarget);
   };
 
   const handleMenuClose = () => {
     setMenuAnchor(null);
-    setSelectedUser(null);
+    setSelectedCv(null);
   };
+
+  if (loading) return <Box sx={{ p: 3 }}>Loading...</Box>;
+  if (error) return <Box sx={{ p: 3 }}>Error fetching CVs</Box>;
 
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold" }}>
-        Employees
+        CVs
       </Typography>
 
       <Box sx={{ mb: 2, maxWidth: 400 }}>
         <SearchInput value={searchTerm} onChange={setSearchTerm} />
       </Box>
 
-      <UsersTable
-        users={sortedUsers}
+      <CvsTable
+        cvs={sortedCvs}
         sortColumn={sortColumn}
         sortDirection={sortDirection}
         onSort={handleSort}
-        onUserClick={handleUserClick}
         onMenuOpen={handleMenuOpen}
       />
 
@@ -75,25 +70,19 @@ export const UsersPage = () => {
         open={Boolean(menuAnchor)}
         onClose={handleMenuClose}
       >
-        {selectedUser && [
+        {selectedCv && (
           <>
             <MenuItem
-              key="profile"
               onClick={() => {
-                if (selectedUser?.id) {
-                  navigate(`/users/${selectedUser.id}`);
-                } else {
-                  console.warn("No selected user ID found");
-                }
+                navigate(`/cvs/${selectedCv.id}`);
                 handleMenuClose();
               }}
             >
-              Profile
+              Details
             </MenuItem>
-            <MenuItem key="update">Update User</MenuItem>
-          </>,
-          <MenuItem key="delete">Delete User</MenuItem>,
-        ]}
+            <MenuItem onClick={handleMenuClose}>Delete</MenuItem>
+          </>
+        )}
       </Menu>
     </Box>
   );
