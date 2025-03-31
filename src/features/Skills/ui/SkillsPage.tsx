@@ -25,7 +25,9 @@ import { GenericModal } from "../../../shared/api/ui/GenericModal";
 import { useSkillsMutations } from "../model/useSkillsMutations";
 
 export const SkillsPage: React.FC = () => {
-  const { userId } = useParams<{ userId: string }>();
+  const { userId: routeUserId } = useParams<{ userId?: string }>();
+  const userId = routeUserId ?? localStorage.getItem("userId");
+
   const [openAdd, setOpenAdd] = useState(false);
   const [selectedSkill, setSelectedSkill] = useState<SkillMastery | null>(null);
   const [skillsToDelete, setSkillsToDelete] = useState<string[]>([]);
@@ -160,6 +162,9 @@ export const SkillsPage: React.FC = () => {
 
   return (
     <Box sx={{ px: 4, py: 3, mx: "auto", maxWidth: 1200 }}>
+      <Typography variant="h5" sx={{ mb: 3, fontWeight: "bold" }}>
+        Skills
+      </Typography>
       <SkillsList
         skills={skillsData.profile.skills}
         allSkills={allSkillsData.skills}
