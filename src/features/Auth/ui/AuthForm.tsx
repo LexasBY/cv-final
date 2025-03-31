@@ -36,10 +36,11 @@ export const AuthForm = ({ type }: AuthFormProps) => {
     formState: { errors },
   } = useForm<AuthFormData>({
     resolver: yupResolver(authSchema),
+    defaultValues: { email: "", password: "" },
   });
 
+  const { ref: passwordRef, ...passwordFieldProps } = register("password");
   const [showPassword, setShowPassword] = useState(false);
-
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
   return (
@@ -72,11 +73,11 @@ export const AuthForm = ({ type }: AuthFormProps) => {
       <TextField
         label="Email"
         type="email"
-        autoComplete="username"
-        {...register("email")}
+        fullWidth
         error={!!errors.email}
         helperText={errors.email?.message}
-        fullWidth
+        {...register("email")}
+        inputProps={{ autoComplete: type === "login" ? "username" : "email" }}
         sx={{ mb: 2 }}
       />
 
@@ -86,13 +87,18 @@ export const AuthForm = ({ type }: AuthFormProps) => {
         error={!!errors.password}
         sx={{ mb: 2 }}
       >
-        <InputLabel htmlFor="password-input">Password</InputLabel>
+        <InputLabel htmlFor="password">Password</InputLabel>
         <OutlinedInput
-          id="password-input"
+          id="password"
           label="Password"
           type={showPassword ? "text" : "password"}
-          autoComplete={type === "login" ? "current-password" : "new-password"}
-          {...register("password")}
+          // Передаём autoComplete через inputProps
+          inputProps={{
+            autoComplete:
+              type === "login" ? "current-password" : "new-password",
+          }}
+          inputRef={passwordRef}
+          {...passwordFieldProps}
           endAdornment={
             <InputAdornment position="end">
               <IconButton onClick={togglePasswordVisibility} edge="end">
