@@ -1,37 +1,39 @@
-import { ApolloClient, InMemoryCache, HttpLink, gql } from "@apollo/client";
-import { setTokens } from "../../../utils/token";
+import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
+import { UpdateTokenResult } from "../../../shared/api/graphql/generated";
+import { setTokens, getRefreshToken } from "../../../utils/token";
 
-// 1. Мутация для обновления токенов
+const refreshClient = new ApolloClient({
+  uri: "https://cv-project-js.inno.ws/api/graphql",
+  cache: new InMemoryCache(),
+});
+
 const REFRESH_TOKEN_MUTATION = gql`
-  mutation RefreshToken($refresh_token: String!) {
-    refreshToken(refresh_token: $refresh_token) {
+  mutation {
+    updateToken {
       access_token
       refresh_token
     }
   }
 `;
 
-// 2. Временный клиент для запроса обновления
-const refreshClient = new ApolloClient({
-  link: new HttpLink({
-    uri: "https://cv-project-js.inno.ws/api/graphql",
-  }),
-  cache: new InMemoryCache(),
-});
-
-// 3. Основная функция для обновления access_token
 export const refreshAccessToken = async (): Promise<string | null> => {
-  const refreshToken = localStorage.getItem("refresh_token");
+  const refreshToken = getRefreshToken();
   if (!refreshToken) return null;
 
   try {
-    const result = await refreshClient.mutate({
+    const result = await refreshClient.mutate<{
+      updateToken: UpdateTokenResult;
+    }>({
       mutation: REFRESH_TOKEN_MUTATION,
-      variables: { refresh_token: refreshToken },
+      context: {
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
+        },
+      },
     });
 
-    const newAccessToken = result.data?.refreshToken?.access_token;
-    const newRefreshToken = result.data?.refreshToken?.refresh_token;
+    const newAccessToken = result.data?.updateToken?.access_token;
+    const newRefreshToken = result.data?.updateToken?.refresh_token;
 
     if (newAccessToken && newRefreshToken) {
       setTokens(newAccessToken, newRefreshToken);

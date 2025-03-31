@@ -36,7 +36,6 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
     refreshAccessToken()
       .then((newToken) => {
         if (!newToken) {
-          clearTokens();
           window.location.href = "/auth/login";
           return;
         }
@@ -54,9 +53,7 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
           complete: observer.complete.bind(observer),
         });
 
-        return () => {
-          subscriber.unsubscribe();
-        };
+        return () => subscriber.unsubscribe();
       })
       .catch(() => {
         clearTokens();

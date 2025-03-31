@@ -55,14 +55,6 @@ const REGISTER_MUTATION = gql`
     }
   }
 `;
-export const REFRESH_TOKEN = gql`
-  mutation RefreshToken($refresh_token: String!) {
-    refreshToken(refresh_token: $refresh_token) {
-      access_token
-      refresh_token
-    }
-  }
-`;
 
 export const useLogin = () =>
   useLazyQuery<{ login: AuthResult }, { auth: AuthInput }>(LOGIN_QUERY);
