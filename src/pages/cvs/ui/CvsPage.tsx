@@ -9,6 +9,8 @@ import AddIcon from "@mui/icons-material/Add";
 import { CreateCvModal } from "../../../shared/ui/Modals/CreateCvModal";
 import { useCreateCv } from "../../../features/Cvs/model/useCreateCv";
 import { useApolloClient } from "@apollo/client";
+import { ConfirmDeleteModal } from "../../../shared/ui/Modals/ConfirmDeleteModal";
+import { useDeleteCv } from "../../../features/Cvs/model/useDeleteCv";
 
 export const CvsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -31,6 +33,7 @@ export const CvsPage: React.FC = () => {
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [selectedCv, setSelectedCv] = useState<Cv | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const handleSort = (column: "name" | "education" | "employee") => {
     setSortDirection((prev) =>
@@ -76,6 +79,25 @@ export const CvsPage: React.FC = () => {
     } catch (e) {
       console.error("Error creating CV", e);
     }
+  };
+  const handleDeleteOpen = () => {
+    setIsDeleteModalOpen(true);
+    setMenuAnchor(null);
+  };
+
+  const { deleteCv } = useDeleteCv();
+
+  const handleDeleteConfirm = async () => {
+    if (!selectedCv) return;
+
+    try {
+      await deleteCv(selectedCv.id);
+      await client.refetchQueries({ include: ["GetAllCVs"] });
+    } catch (err) {
+      console.error("Failed to delete CV", err);
+    }
+
+    setIsDeleteModalOpen(false);
   };
 
   if (loading) return <Box sx={{ p: 3 }}>Loading...</Box>;
@@ -134,25 +156,34 @@ export const CvsPage: React.FC = () => {
         open={Boolean(menuAnchor)}
         onClose={handleMenuClose}
       >
-        {selectedCv && (
-          <>
-            <MenuItem
-              onClick={() => {
-                navigate(`/cvs/${selectedCv.id}`);
-                handleMenuClose();
-              }}
-            >
-              Details
-            </MenuItem>
-            <MenuItem onClick={handleMenuClose}>Delete</MenuItem>
-          </>
-        )}
+        {selectedCv && [
+          <MenuItem
+            key="details"
+            onClick={() => {
+              navigate(`/cvs/${selectedCv.id}`);
+              handleMenuClose();
+            }}
+          >
+            Details
+          </MenuItem>,
+          <MenuItem key="delete" onClick={handleDeleteOpen}>
+            Delete
+          </MenuItem>,
+        ]}
       </Menu>
 
       <CreateCvModal
         open={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateCv}
+      />
+
+      <ConfirmDeleteModal
+        open={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        entityType="cv"
+        entityName={selectedCv?.name || ""}
       />
     </Box>
   );

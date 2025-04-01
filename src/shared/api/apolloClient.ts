@@ -64,5 +64,11 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
 
 export const client = new ApolloClient({
   link: from([authLink, errorLink, httpLink]),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Profile: {
+        keyFields: ["id"],
+      },
+    },
+  }),
 });
