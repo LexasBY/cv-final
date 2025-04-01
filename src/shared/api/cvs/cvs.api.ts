@@ -76,3 +76,17 @@ export const DELETE_CV = gql`
     }
   }
 `;
+
+export const UPDATE_CV = gql`
+  mutation UpdateCv($cv: UpdateCvInput!) {
+    updateCv(cv: $cv) {
+      id
+      name
+      education
+      description
+      user {
+        id
+      }
+    }
+  }
+`;
