@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Box, Avatar, ListItemText, Menu, MenuItem } from "@mui/material";
 import { AccountCircle, Settings, Logout } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { client } from "../../../shared/api/apolloClient";
 
 interface UserProfileProps {
   userName: string;
@@ -26,10 +27,11 @@ export const UserProfile = ({
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("access_token");
     localStorage.removeItem("userId");
+    await client.clearStore();
     navigate("/auth/login");
   };
 

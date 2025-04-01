@@ -86,7 +86,6 @@ export const ProfilePage: React.FC = () => {
 
   return (
     <Box sx={{ px: 4, py: 3, mx: "auto" }}>
-      {/* Хлебные крошки */}
       <Box display="flex" alignItems="center" gap={1} mb={2}>
         <Typography
           variant="body2"
@@ -114,7 +113,6 @@ export const ProfilePage: React.FC = () => {
         )}
       </Box>
 
-      {/* Табы */}
       <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
         <Tabs value={currentTab} onChange={handleTabChange}>
           <Tab label="PROFILE" />
@@ -123,10 +121,8 @@ export const ProfilePage: React.FC = () => {
         </Tabs>
       </Box>
 
-      {/* Контент */}
       {currentTab === 0 ? (
         <Box>
-          {/* Аватар */}
           <Box display="flex" justifyContent="center" mb={4}>
             <AvatarDropzone
               avatarUrl={user.profile.avatar}
@@ -137,7 +133,6 @@ export const ProfilePage: React.FC = () => {
             />
           </Box>
 
-          {/* Инфо */}
           <Typography variant="h5" mt={2} align="center">
             {user.profile.first_name} {user.profile.last_name}
           </Typography>
@@ -153,7 +148,6 @@ export const ProfilePage: React.FC = () => {
             A member since {joinedDate}
           </Typography>
 
-          {/* Поля */}
           <Box maxWidth={900} mx="auto" mt={3}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>

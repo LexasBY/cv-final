@@ -4,14 +4,21 @@ import { Search } from "@mui/icons-material";
 type SearchInputProps = {
   value: string;
   onChange: (value: string) => void;
+  placeholder?: string;
+  fullWidth?: boolean;
 };
 
-export const SearchInput = ({ value, onChange }: SearchInputProps) => {
+export const SearchInput = ({
+  value,
+  onChange,
+  placeholder = "Search",
+  fullWidth = true,
+}: SearchInputProps) => {
   return (
     <TextField
-      fullWidth
+      fullWidth={fullWidth}
       variant="outlined"
-      placeholder="Search"
+      placeholder={placeholder}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       sx={{
@@ -20,14 +27,12 @@ export const SearchInput = ({ value, onChange }: SearchInputProps) => {
           borderRadius: "50px",
         },
       }}
-      slotProps={{
-        input: {
-          startAdornment: (
-            <InputAdornment position="start">
-              <Search />
-            </InputAdornment>
-          ),
-        },
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <Search />
+          </InputAdornment>
+        ),
       }}
     />
   );
