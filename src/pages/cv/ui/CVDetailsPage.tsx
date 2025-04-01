@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Button, TextField } from "@mui/material";
-import { useCvContext } from "../../cv/model/CvContext";
 import { useUpdateCv } from "../model/useCv";
+import { useCvContext } from "../model/useCvContext";
 
 export const CVDetailsPage: React.FC = () => {
   const { cv, refetch } = useCvContext();

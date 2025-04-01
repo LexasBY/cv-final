@@ -1,6 +1,6 @@
 import React from "react";
-import { CvProvider } from "../model/CvContext";
 import { CVPageContent } from "./CVPageContent";
+import { CvProvider } from "../model/CvProvider";
 
 export const CVPage: React.FC = () => {
   return (

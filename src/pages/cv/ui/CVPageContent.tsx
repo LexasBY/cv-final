@@ -7,7 +7,7 @@ import {
   Link,
 } from "react-router-dom";
 import { Box, Tabs, Tab, Typography } from "@mui/material";
-import { useCvContext } from "../model/CvContext";
+import { useCvContext } from "../model/useCvContext";
 
 export const CVPageContent: React.FC = () => {
   const { cv } = useCvContext();
