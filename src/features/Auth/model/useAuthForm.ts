@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useLogin, useRegister } from "./api";
 import { AuthInput } from "../../../shared/api/graphql/generated";
 import { clearTokens, setTokens } from "../../../utils/token";
+import { client } from "../../../shared/api/apolloClient";
 
 export const useAuthForm = (type: "login" | "register") => {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ export const useAuthForm = (type: "login" | "register") => {
         if (accessToken && refreshToken && userId) {
           setTokens(accessToken, refreshToken);
           localStorage.setItem("userId", userId);
+          await client.resetStore();
           navigate(`/users/${userId}`);
         } else {
           throw new Error("Invalid login response");

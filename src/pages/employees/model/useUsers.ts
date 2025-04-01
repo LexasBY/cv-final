@@ -21,8 +21,8 @@ export const useUsers = () => {
 
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
-      const fullName = `${user.profile.first_name ?? ""} ${
-        user.profile.last_name ?? ""
+      const fullName = `${user.profile?.first_name ?? ""} ${
+        user.profile?.last_name ?? ""
       }`;
       return (fullName + " " + user.email)
         .toLowerCase()
