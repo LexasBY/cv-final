@@ -55,6 +55,7 @@ export const GET_CV_BY_ID = gql`
       skills {
         name
         mastery
+        categoryId
       }
       languages {
         name
@@ -86,6 +87,58 @@ export const UPDATE_CV = gql`
       description
       user {
         id
+      }
+    }
+  }
+`;
+
+export const GET_CV_SKILLS = gql`
+  query GetCvSkills($cvId: ID!) {
+    cv(cvId: $cvId) {
+      id
+      skills {
+        name
+        mastery
+        categoryId
+      }
+    }
+  }
+`;
+
+export const ADD_CV_SKILL = gql`
+  mutation AddCvSkill($skill: AddCvSkillInput!) {
+    addCvSkill(skill: $skill) {
+      id
+      skills {
+        name
+        mastery
+        categoryId
+      }
+    }
+  }
+`;
+
+export const UPDATE_CV_SKILL = gql`
+  mutation UpdateCvSkill($skill: UpdateCvSkillInput!) {
+    updateCvSkill(skill: $skill) {
+      id
+      skills {
+        name
+        mastery
+        categoryId
+      }
+    }
+  }
+`;
+
+export const DELETE_CV_SKILL = gql`
+  mutation DeleteCvSkill($skill: DeleteCvSkillInput!) {
+    deleteCvSkill(skill: $skill) {
+      id
+      skills {
+        name
+        mastery
+        categoryId
       }
     }
   }
