@@ -1,12 +1,17 @@
 import { useMutation, ApolloCache } from "@apollo/client";
 
-import { SkillMastery } from "../../../shared/api/graphql/generated";
+import {
+  AddCvSkillInput,
+  DeleteCvSkillInput,
+  SkillMastery,
+} from "../../../shared/api/graphql/generated";
 import {
   ADD_CV_SKILL,
   DELETE_CV_SKILL,
   GET_CV_SKILLS,
   UPDATE_CV_SKILL,
 } from "../../../shared/api/cvs/cvs.api";
+import { useCvContext } from "../../../pages/cv/model/useCvContext";
 
 interface CvSkillData {
   cv: {
@@ -14,25 +19,16 @@ interface CvSkillData {
   };
 }
 
-interface AddCvSkillInput {
-  cvId: string;
-  name: string;
-  mastery: string;
-  categoryId?: string;
-}
+export const useCvSkillsMutations = () => {
+  const { cv } = useCvContext();
+  const cvId = cv?.id;
 
-interface DeleteCvSkillInput {
-  cvId: string;
-  name: string[];
-}
-
-export const useCvSkillsMutations = (cvId: string) => {
   const [addSkillMutation] = useMutation<
     { addCvSkill: SkillMastery },
     { skill: AddCvSkillInput }
   >(ADD_CV_SKILL, {
     update: (cache: ApolloCache<{ addCvSkill: SkillMastery }>, { data }) => {
-      if (!data) return;
+      if (!data || !cvId) return;
       const existing = cache.readQuery<CvSkillData>({
         query: GET_CV_SKILLS,
         variables: { cvId },
@@ -57,7 +53,7 @@ export const useCvSkillsMutations = (cvId: string) => {
     { skill: AddCvSkillInput }
   >(UPDATE_CV_SKILL, {
     update: (cache: ApolloCache<{ updateCvSkill: SkillMastery }>, { data }) => {
-      if (!data) return;
+      if (!data || !cvId) return;
       const existing = cache.readQuery<CvSkillData>({
         query: GET_CV_SKILLS,
         variables: { cvId },
@@ -84,7 +80,7 @@ export const useCvSkillsMutations = (cvId: string) => {
     { skill: DeleteCvSkillInput }
   >(DELETE_CV_SKILL, {
     update: (cache: ApolloCache<{ deleteCvSkill: SkillMastery }>, { data }) => {
-      if (!data) return;
+      if (!data || !cvId) return;
       const existing = cache.readQuery<CvSkillData>({
         query: GET_CV_SKILLS,
         variables: { cvId },

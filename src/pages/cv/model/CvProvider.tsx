@@ -13,7 +13,6 @@ export const CvProvider: React.FC<{ children: React.ReactNode }> = ({
     variables: { cvId },
     skip: !cvId,
   });
-  console.log("GET_CV_BY_ID QUERY", GET_CV_BY_ID.loc?.source.body);
 
   return (
     <CvContext.Provider value={{ cv: data?.cv || null, refetch }}>

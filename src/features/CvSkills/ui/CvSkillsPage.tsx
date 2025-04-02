@@ -6,7 +6,6 @@ import {
   Typography,
   Alert,
 } from "@mui/material";
-import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 
 import {
@@ -23,9 +22,11 @@ import {
   GET_SKILL_CATEGORIES,
   GET_SKILLS,
 } from "../../../shared/api/user/skills.api";
-console.log("USED GET_CV_SKILLS", GET_CV_SKILLS.loc?.source.body);
+import { useCvContext } from "../../../pages/cv/model/useCvContext";
+
 export const CvSkillsPage: React.FC = () => {
-  const { cvId } = useParams<{ cvId?: string }>();
+  const { cv } = useCvContext();
+  const cvId = cv?.id;
 
   const [openAdd, setOpenAdd] = useState(false);
   const [selectedSkill, setSelectedSkill] = useState<SkillMastery | null>(null);
@@ -36,6 +37,9 @@ export const CvSkillsPage: React.FC = () => {
     message: "",
     severity: "success" as "success" | "error",
   });
+
+  const { addSkillMutation, updateSkillMutation, deleteSkillMutation } =
+    useCvSkillsMutations();
 
   const {
     data: skillsData,
@@ -55,10 +59,7 @@ export const CvSkillsPage: React.FC = () => {
     error: allSkillsError,
   } = useQuery(GET_SKILLS);
 
-  const { addSkillMutation, updateSkillMutation, deleteSkillMutation } =
-    useCvSkillsMutations(cvId!);
-
-  const isOwner = true; // доработать проверку доступа к cvId, если нужно
+  const isOwner = true;
 
   const availableSkillsToAdd = useMemo(() => {
     if (!skillsData || !allSkillsData) return [];
@@ -77,7 +78,7 @@ export const CvSkillsPage: React.FC = () => {
     []
   );
 
-  if (skillsLoading || categoriesLoading || allSkillsLoading || !cvId)
+  if (!cvId || skillsLoading || categoriesLoading || allSkillsLoading)
     return <CircularProgress />;
   if (skillsError || categoriesError || allSkillsError)
     return <Typography color="error">Error loading data</Typography>;
@@ -85,6 +86,7 @@ export const CvSkillsPage: React.FC = () => {
     return <Typography color="error">No CV data found</Typography>;
 
   const handleAddSkill = async (skillName: string, mastery: string) => {
+    if (!cvId) return;
     const skill = allSkillsData.skills.find((s: Skill) => s.name === skillName);
     const categoryId = skill?.category?.id;
 
@@ -94,7 +96,7 @@ export const CvSkillsPage: React.FC = () => {
           skill: {
             cvId,
             name: skillName,
-            mastery,
+            mastery: mastery as Mastery,
             categoryId,
           },
         },
@@ -108,7 +110,7 @@ export const CvSkillsPage: React.FC = () => {
   };
 
   const handleUpdateSkill = async (mastery: string) => {
-    if (!selectedSkill) return;
+    if (!selectedSkill || !cvId) return;
     const skill = allSkillsData.skills.find(
       (s: Skill) => s.name === selectedSkill.name
     );
@@ -120,7 +122,7 @@ export const CvSkillsPage: React.FC = () => {
           skill: {
             cvId,
             name: selectedSkill.name,
-            mastery,
+            mastery: mastery as Mastery,
             categoryId,
           },
         },
@@ -138,6 +140,7 @@ export const CvSkillsPage: React.FC = () => {
   };
 
   const handleDeleteSkills = async () => {
+    if (!cvId) return;
     try {
       await deleteSkillMutation({
         variables: {
