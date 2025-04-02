@@ -9,6 +9,12 @@ import { SkillsPage } from "../features/Skills/ui/SkillsPage";
 import { LanguagesPage } from "../features/Languages/ui/LanguagesPage";
 import { CvsPage } from "../pages/cvs/ui/CvsPage";
 
+import { CVPage } from "../pages/cv/ui/CVPage";
+import { CVDetailsPage } from "../pages/cv/ui/CVDetailsPage";
+import { CvSkillsPage } from "../features/CvSkills/ui/CvSkillsPage";
+// import { CVProjectsPage } from "../pages/cv/ui/CVProjectsPage";
+// import { CVPreviewPage } from "../pages/cv/ui/CVPreviewPage";
+
 export const Router = () => (
   <Routes>
     <Route path="/auth/login" element={<LoginPage />} />
@@ -23,6 +29,13 @@ export const Router = () => (
       <Route path="/users/:userId" element={<ProfilePage />}>
         <Route path="skills" element={<SkillsPage />} />
         <Route path="languages" element={<LanguagesPage />} />
+      </Route>
+
+      <Route path="/cvs/:cvId" element={<CVPage />}>
+        <Route path="details" element={<CVDetailsPage />} />
+        <Route path="skills" element={<CvSkillsPage />} />
+        {/* <Route path="projects" element={<CVProjectsPage />} />
+        <Route path="preview" element={<CVPreviewPage />} /> */}
       </Route>
     </Route>
 

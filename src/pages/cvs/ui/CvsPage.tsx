@@ -160,7 +160,7 @@ export const CvsPage: React.FC = () => {
           <MenuItem
             key="details"
             onClick={() => {
-              navigate(`/cvs/${selectedCv.id}`);
+              navigate(`/cvs/${selectedCv.id}/details`);
               handleMenuClose();
             }}
           >

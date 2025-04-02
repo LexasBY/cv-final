@@ -37,9 +37,9 @@ export const NavigationMenu = ({ isCollapsed }: NavigationMenuProps) => {
             width: "100%",
             minWidth: isCollapsed ? 70 : 300,
             color: "rgba(255,255,255,0.8)",
-            borderRadius: "0 24px 24px 0", // Закругление справа в любом состоянии
-            overflow: "visible", // Чтобы закругление не пряталось
-            marginRight: isCollapsed ? -10 : 0, // Смещаем немного влево, чтобы было видно
+            borderRadius: "0 24px 24px 0",
+            overflow: "visible",
+            marginRight: isCollapsed ? -10 : 0,
 
             transition:
               "background-color 0.3s ease, color 0.3s ease, border-radius 0.3s ease, margin 0.3s ease",
