@@ -64,7 +64,11 @@ export const GET_CV_BY_ID = gql`
       projects {
         id
         name
+        internal_name
         description
+        domain
+        start_date
+        end_date
       }
     }
   }
