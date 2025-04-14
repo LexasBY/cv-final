@@ -20,6 +20,8 @@ interface ProjectsTableProps {
   sortColumn: "name" | "domain" | "start_date" | "end_date";
   sortDirection: "asc" | "desc";
   onSort: (column: "name" | "domain" | "start_date" | "end_date") => void;
+  onEditClick?: (project: CvProject) => void;
+  onDeleteClick?: (project: CvProject) => void;
 }
 
 export const ProjectsTable: React.FC<ProjectsTableProps> = ({
@@ -27,23 +29,25 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({
   sortColumn,
   sortDirection,
   onSort,
+  onEditClick,
+  onDeleteClick,
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(
+  const [selectedProject, setSelectedProject] = useState<CvProject | null>(
     null
   );
 
   const handleMenuOpen = (
     event: React.MouseEvent<HTMLElement>,
-    projectId: string
+    project: CvProject
   ) => {
     setAnchorEl(event.currentTarget);
-    setSelectedProjectId(projectId);
+    setSelectedProject(project);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
-    setSelectedProjectId(null);
+    setSelectedProject(null);
   };
 
   const createSortHandler =
@@ -54,7 +58,7 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({
   const formatDate = (dateStr?: string | null) => {
     if (!dateStr) return "—";
     const date = new Date(dateStr);
-    return date.toLocaleDateString("en-GB"); // format: DD/MM/YYYY
+    return date.toLocaleDateString("en-GB");
   };
 
   return (
@@ -133,7 +137,7 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({
                   <TableCell>{formatDate(project.end_date)}</TableCell>
                   <TableCell align="right">
                     <IconButton
-                      onClick={(e) => handleMenuOpen(e, project.id)}
+                      onClick={(e) => handleMenuOpen(e, project)}
                       size="small"
                     >
                       <MoreVertIcon />
@@ -166,7 +170,7 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({
       >
         <MenuItem
           onClick={() => {
-            console.log("Update project", selectedProjectId);
+            if (selectedProject) onEditClick?.(selectedProject);
             handleMenuClose();
           }}
         >
@@ -174,7 +178,7 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({
         </MenuItem>
         <MenuItem
           onClick={() => {
-            console.log("Remove project", selectedProjectId);
+            if (selectedProject) onDeleteClick?.(selectedProject);
             handleMenuClose();
           }}
         >
