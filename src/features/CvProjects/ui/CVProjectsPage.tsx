@@ -14,11 +14,12 @@ import { SearchInput } from "../../../shared/ui/SearchInput";
 import { useCvContext } from "../../../pages/cv/model/useCvContext";
 import { ProjectsTable } from "./CVProjectTable";
 import { Cv, CvProject } from "../../../shared/api/graphql/generated";
-import { AddProjectModal } from "../ui/AddProjectModal";
+import { AddProjectModal, EditingProject } from "../ui/AddProjectModal";
 import { GET_PROJECTS } from "../../../shared/api/projects/projects.api";
 import { useAddCvProject } from "../model/useAddCvProject";
 import { useDeleteCvProject } from "../model/useDeleteCvProject";
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
+import { useUpdateCvProject } from "../model/useUpdateCvProject";
 
 export const CVProjectsPage: React.FC = () => {
   const { cv, refetch, setCv } = useCvContext();
@@ -36,7 +37,9 @@ export const CVProjectsPage: React.FC = () => {
   });
 
   const [isAddOpen, setIsAddOpen] = useState(false);
-  const [editingProject, setEditingProject] = useState<CvProject | null>(null);
+  const [editingProject, setEditingProject] = useState<EditingProject | null>(
+    null
+  );
   const [deletingProject, setDeletingProject] = useState<CvProject | null>(
     null
   );
@@ -49,6 +52,7 @@ export const CVProjectsPage: React.FC = () => {
 
   const { addProject } = useAddCvProject();
   const { deleteProject } = useDeleteCvProject();
+  const { updateProject } = useUpdateCvProject();
 
   const handleSort = (
     column: "name" | "domain" | "start_date" | "end_date"
@@ -61,27 +65,23 @@ export const CVProjectsPage: React.FC = () => {
 
   const filteredProjects = useMemo(() => {
     if (!cv?.projects) return [];
-
     const filtered = cv.projects.filter(
       (project) =>
         project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         project.internal_name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
     return [...filtered].sort((a, b) => {
       const aValue = a[sortColumn] || "";
       const bValue = b[sortColumn] || "";
-
       const aStr = typeof aValue === "string" ? aValue : String(aValue ?? "");
       const bStr = typeof bValue === "string" ? bValue : String(bValue ?? "");
-
       if (aStr < bStr) return sortDirection === "asc" ? -1 : 1;
       if (aStr > bStr) return sortDirection === "asc" ? 1 : -1;
       return 0;
     });
   }, [searchTerm, cv?.projects, sortColumn, sortDirection]);
 
-  const handleAddSubmit = async (data: {
+  const handleSubmit = async (data: {
     projectId: string;
     start_date: string;
     end_date?: string;
@@ -91,31 +91,53 @@ export const CVProjectsPage: React.FC = () => {
     try {
       if (!cv?.id) throw new Error("Missing CV ID");
 
-      await addProject({
-        variables: {
-          project: {
-            cvId: cv.id,
-            projectId: data.projectId,
-            start_date: data.start_date,
-            end_date: data.end_date,
-            roles: data.roles,
-            responsibilities: data.responsibilities,
+      if (editingProject) {
+        await updateProject({
+          variables: {
+            project: {
+              cvId: cv.id,
+              projectId: editingProject.refProjectId,
+              start_date: data.start_date,
+              end_date: data.end_date,
+              roles: data.roles,
+              responsibilities: data.responsibilities,
+            },
           },
-        },
-      });
+        });
+        setSnackbar({
+          open: true,
+          message: "Project successfully updated!",
+          severity: "success",
+        });
+      } else {
+        await addProject({
+          variables: {
+            project: {
+              cvId: cv.id,
+              projectId: data.projectId,
+              start_date: data.start_date,
+              end_date: data.end_date,
+              roles: data.roles,
+              responsibilities: data.responsibilities,
+            },
+          },
+        });
+        setSnackbar({
+          open: true,
+          message: "Project successfully added!",
+          severity: "success",
+        });
+      }
 
       setIsAddOpen(false);
+      setEditingProject(null);
       refetch();
+    } catch {
       setSnackbar({
         open: true,
-        message: "Project successfully added!",
-        severity: "success",
-      });
-    } catch (e) {
-      console.error("Add project error:", e);
-      setSnackbar({
-        open: true,
-        message: "Failed to add project",
+        message: editingProject
+          ? "Failed to update project"
+          : "Failed to add project",
         severity: "error",
       });
     }
@@ -125,8 +147,8 @@ export const CVProjectsPage: React.FC = () => {
     try {
       if (!cv?.id || !deletingProject) throw new Error("Missing data");
 
-      const projectId = deletingProject.project?.id || deletingProject.id;
-      if (!projectId) throw new Error("Missing project ID");
+      const projectId = deletingProject.project?.id;
+      if (!projectId) throw new Error("Missing refProjectId for deletion");
 
       const { data } = await deleteProject({
         variables: {
@@ -148,6 +170,7 @@ export const CVProjectsPage: React.FC = () => {
             })) || [],
         };
       });
+      await refetch();
 
       setDeletingProject(null);
       setSnackbar({
@@ -155,8 +178,7 @@ export const CVProjectsPage: React.FC = () => {
         message: "Project removed successfully",
         severity: "success",
       });
-    } catch (e) {
-      console.error("Delete project error:", e);
+    } catch {
       setSnackbar({
         open: true,
         message: "Failed to remove project",
@@ -165,12 +187,45 @@ export const CVProjectsPage: React.FC = () => {
     }
   };
 
+  const buildEditingProject = (project: CvProject): EditingProject => {
+    const full = projectsData?.projects.find(
+      (p: { id: string }) => p.id === (project.project?.id || project.id)
+    );
+    if (full) {
+      return {
+        cvProjectId: project.id,
+        refProjectId: full.id,
+        name: full.name,
+        start_date: project.start_date,
+        end_date: project.end_date ?? undefined,
+        responsibilities: project.responsibilities,
+        roles: project.roles,
+        domain: full.domain,
+        description: full.description,
+        environment: full.environment,
+      };
+    }
+    return {
+      cvProjectId: project.id,
+      refProjectId: project.project?.id || project.id,
+      name: project.name,
+      start_date: project.start_date,
+      end_date: project.end_date ?? undefined,
+      responsibilities: project.responsibilities,
+      roles: project.roles,
+      domain: project.domain,
+      description: project.description,
+      environment: project.environment,
+    };
+  };
+
   if (loadingProjects)
     return (
       <Box sx={{ p: 3 }}>
         <CircularProgress />
       </Box>
     );
+
   if (errorProjects)
     return (
       <Box sx={{ p: 3 }}>
@@ -204,9 +259,7 @@ export const CVProjectsPage: React.FC = () => {
               py: 1.1,
               minWidth: 250,
               transition: "background-color 0.2s",
-              "&:hover": {
-                backgroundColor: "rgba(255, 0, 0, 0.05)",
-              },
+              "&:hover": { backgroundColor: "rgba(255, 0, 0, 0.05)" },
             }}
             startIcon={<AddIcon />}
           >
@@ -219,7 +272,10 @@ export const CVProjectsPage: React.FC = () => {
           sortColumn={sortColumn}
           sortDirection={sortDirection}
           onSort={handleSort}
-          onEditClick={(project) => setEditingProject(project)}
+          onEditClick={(project) => {
+            const full = buildEditingProject(project);
+            setEditingProject(full);
+          }}
           onDeleteClick={(project) => setDeletingProject(project)}
         />
       </Box>
@@ -230,19 +286,9 @@ export const CVProjectsPage: React.FC = () => {
           setIsAddOpen(false);
           setEditingProject(null);
         }}
-        onSubmit={handleAddSubmit}
+        onSubmit={handleSubmit}
         projects={projectsData?.projects || []}
-        defaultValues={
-          editingProject
-            ? {
-                projectId: editingProject.project.id,
-                start_date: editingProject.start_date,
-                end_date: editingProject.end_date ?? undefined,
-                responsibilities: editingProject.responsibilities,
-                roles: editingProject.roles,
-              }
-            : undefined
-        }
+        editingProject={editingProject}
       />
 
       <ConfirmDeleteModal

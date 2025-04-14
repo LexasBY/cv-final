@@ -4,40 +4,48 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button,
   TextField,
+  Button,
   MenuItem,
   Grid,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { Project } from "../../../shared/api/graphql/generated";
 
-interface AddProjectModalProps {
+export type EditingProject = {
+  cvProjectId: string;
+  refProjectId: string;
+  name: string;
+  start_date: string;
+  end_date?: string;
+  responsibilities: string[];
+  roles: string[];
+  domain: string;
+  description: string;
+  environment: string[];
+};
+
+type AddProjectModalProps = {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: {
     projectId: string;
     start_date: string;
     end_date?: string;
-    responsibilities: string[];
     roles: string[];
+    responsibilities: string[];
   }) => void;
   projects: Project[];
-  defaultValues?: {
-    projectId: string;
-    start_date: string;
-    end_date?: string;
-    responsibilities: string[];
-    roles: string[];
-  };
-}
+  editingProject?: EditingProject | null;
+};
 
 export const AddProjectModal: React.FC<AddProjectModalProps> = ({
   open,
   onClose,
   onSubmit,
   projects,
+  editingProject,
 }) => {
   const [projectId, setProjectId] = useState("");
   const [responsibilities, setResponsibilities] = useState("");
@@ -45,12 +53,10 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
 
-  const selectedProject = projects.find((p) => p.id === projectId);
   const isValid = Boolean(projectId && startDate);
 
   const handleSubmit = () => {
     if (!isValid) return;
-
     onSubmit({
       projectId,
       start_date: startDate!.format("YYYY-MM-DD"),
@@ -67,45 +73,71 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
   };
 
   useEffect(() => {
-    if (!open) {
-      setProjectId("");
-      setResponsibilities("");
-      setRoles("");
-      setStartDate(null);
-      setEndDate(null);
+    if (open) {
+      if (editingProject) {
+        setProjectId(editingProject.cvProjectId);
+        setStartDate(
+          editingProject.start_date ? dayjs(editingProject.start_date) : null
+        );
+        setEndDate(
+          editingProject.end_date ? dayjs(editingProject.end_date) : null
+        );
+        setResponsibilities((editingProject.responsibilities || []).join("\n"));
+        setRoles((editingProject.roles || []).join("\n"));
+      } else {
+        setProjectId("");
+        setStartDate(null);
+        setEndDate(null);
+        setResponsibilities("");
+        setRoles("");
+      }
     }
-  }, [open]);
+  }, [open, editingProject]);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-      <DialogTitle>Add Project</DialogTitle>
+      <DialogTitle>
+        {editingProject ? "Update Project" : "Add Project"}
+      </DialogTitle>
       <DialogContent sx={{ mt: 1 }}>
         <Grid container spacing={2} sx={{ mb: 2 }}>
           <Grid item xs={6}>
-            <TextField
-              fullWidth
-              select
-              label="Project"
-              value={projectId}
-              onChange={(e) => setProjectId(e.target.value)}
-            >
-              {projects.map((project) => (
-                <MenuItem key={project.id} value={project.id}>
-                  {project.name}
-                </MenuItem>
-              ))}
-            </TextField>
+            {editingProject ? (
+              <TextField
+                fullWidth
+                label="Project"
+                value={editingProject.name}
+                disabled
+              />
+            ) : (
+              <TextField
+                fullWidth
+                select
+                label="Project"
+                value={projectId}
+                onChange={(e) => setProjectId(e.target.value)}
+              >
+                {projects.map((project) => (
+                  <MenuItem key={project.id} value={project.id}>
+                    {project.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
           </Grid>
           <Grid item xs={6}>
             <TextField
               fullWidth
               label="Domain"
-              value={selectedProject?.domain || ""}
+              value={
+                editingProject?.domain ||
+                projects.find((p) => p.id === projectId)?.domain ||
+                ""
+              }
               disabled
             />
           </Grid>
         </Grid>
-
         <Grid container spacing={2} sx={{ mb: 2 }}>
           <Grid item xs={6}>
             <DatePicker
@@ -113,9 +145,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
               value={startDate}
               onChange={(val) => setStartDate(val)}
               format="DD/MM/YYYY"
-              slotProps={{
-                textField: { fullWidth: true },
-              }}
+              slotProps={{ textField: { fullWidth: true } }}
             />
           </Grid>
           <Grid item xs={6}>
@@ -124,31 +154,34 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
               value={endDate}
               onChange={(val) => setEndDate(val)}
               format="DD/MM/YYYY"
-              slotProps={{
-                textField: { fullWidth: true },
-              }}
+              slotProps={{ textField: { fullWidth: true } }}
             />
           </Grid>
         </Grid>
-
         <TextField
           fullWidth
           label="Description"
           multiline
           disabled
           sx={{ mb: 2 }}
-          value={selectedProject?.description || ""}
+          value={
+            editingProject?.description ||
+            projects.find((p) => p.id === projectId)?.description ||
+            ""
+          }
         />
-
         <TextField
           fullWidth
           label="Environment"
           multiline
           disabled
           sx={{ mb: 2 }}
-          value={selectedProject?.environment.join(", ") || ""}
+          value={
+            editingProject?.environment?.join(", ") ||
+            projects.find((p) => p.id === projectId)?.environment?.join(", ") ||
+            ""
+          }
         />
-
         <TextField
           fullWidth
           multiline
@@ -158,39 +191,20 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
           onChange={(e) => setResponsibilities(e.target.value)}
           sx={{ mb: 2 }}
         />
+        <TextField
+          fullWidth
+          multiline
+          rows={3}
+          label="Roles"
+          value={roles}
+          onChange={(e) => setRoles(e.target.value)}
+          sx={{ mb: 2 }}
+        />
       </DialogContent>
-
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button
-          onClick={onClose}
-          sx={{
-            border: "1px solid rgba(255, 255, 255, 0.2)",
-            borderRadius: "50px",
-            px: 4,
-            py: 1.2,
-            fontWeight: "bold",
-            color: "rgba(255, 255, 255, 0.6)",
-          }}
-        >
-          CANCEL
-        </Button>
-        <Button
-          onClick={handleSubmit}
-          disabled={!isValid}
-          sx={{
-            ml: 2,
-            borderRadius: "50px",
-            px: 4,
-            py: 1.2,
-            fontWeight: "bold",
-            backgroundColor: isValid ? "error.main" : "rgba(255,255,255,0.1)",
-            color: isValid ? "white" : "rgba(255,255,255,0.6)",
-            "&:hover": {
-              backgroundColor: isValid ? "error.dark" : "rgba(255,255,255,0.1)",
-            },
-          }}
-        >
-          ADD
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleSubmit} disabled={!isValid} color="error">
+          {editingProject ? "Update" : "Add"}
         </Button>
       </DialogActions>
     </Dialog>

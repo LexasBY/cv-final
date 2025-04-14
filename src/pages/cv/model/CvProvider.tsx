@@ -12,19 +12,23 @@ export const CvProvider: React.FC<{ children: React.ReactNode }> = ({
   const { data, refetch } = useQuery<{ cv: Cv }>(GET_CV_BY_ID, {
     variables: { cvId },
     skip: !cvId,
+    fetchPolicy: "network-only",
   });
 
   const [cvData, setCvData] = useState<Cv | null>(null);
 
   useEffect(() => {
     if (data?.cv) {
-      setCvData(data.cv);
+      const patchedCv: Cv = {
+        ...data.cv,
+        projects: (data.cv.projects ?? []).map((p) => ({
+          ...p,
+          project: p.project ?? { id: p.id, __typename: "Project" },
+        })),
+      };
+      setCvData(patchedCv);
     }
   }, [data]);
-
-  <CvContext.Provider value={{ cv: cvData, setCv: setCvData, refetch }}>
-    {children}
-  </CvContext.Provider>;
 
   return (
     <CvContext.Provider value={{ cv: cvData, setCv: setCvData, refetch }}>

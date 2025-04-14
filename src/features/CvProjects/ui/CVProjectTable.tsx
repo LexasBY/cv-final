@@ -115,7 +115,6 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({
             <TableCell align="right" />
           </TableRow>
         </TableHead>
-
         <TableBody>
           {projects.length === 0 ? (
             <TableRow sx={{ "& td": { borderBottom: "none" } }}>
@@ -170,7 +169,16 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({
       >
         <MenuItem
           onClick={() => {
-            if (selectedProject) onEditClick?.(selectedProject);
+            if (selectedProject) {
+              console.log("Edit project clicked", selectedProject);
+              onEditClick?.({
+                ...selectedProject,
+                project: selectedProject.project ?? {
+                  id: String(selectedProject.id),
+                  __typename: "Project",
+                },
+              });
+            }
             handleMenuClose();
           }}
         >

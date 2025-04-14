@@ -42,15 +42,21 @@ export const UPDATE_CV_PROJECT = gql`
   mutation UpdateCvProject($project: UpdateCvProjectInput!) {
     updateCvProject(project: $project) {
       id
-      project {
+      projects {
         id
         name
         internal_name
+        domain
+        description
+        start_date
+        end_date
+        environment
+        roles
+        responsibilities
+        project {
+          id
+        }
       }
-      start_date
-      end_date
-      responsibilities
-      roles
     }
   }
 `;
