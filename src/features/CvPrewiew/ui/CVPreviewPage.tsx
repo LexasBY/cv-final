@@ -14,9 +14,10 @@ import {
 import { useCvContext } from "../../../pages/cv/model/useCvContext";
 import { Mastery, Proficiency } from "../../../shared/api/graphql/generated";
 import { groupSkillsByParentCategory } from "../../../shared/lib/skills/groupSkillsByParent";
+import { getSkillUsageInfo } from "../../../shared/lib/skills/getSkillUsageInfo";
 
 export const CVPreviewPage: React.FC = () => {
-  const { cv, skillCategories } = useCvContext(); // <-- добавили skillCategories
+  const { cv, skillCategories } = useCvContext();
 
   if (!cv) {
     return (
@@ -163,42 +164,60 @@ export const CVPreviewPage: React.FC = () => {
       </Typography>
 
       <Table>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ fontWeight: "bold" }}>SKILLS</TableCell>
-              <TableCell />
-              <TableCell sx={{ fontWeight: "bold" }}>
-                EXPERIENCE IN YEARS
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>LAST USED</TableCell>
-            </TableRow>
-          </TableHead>
+        <TableHead>
+          <TableRow>
+            <TableCell sx={{ fontWeight: "bold" }}>SKILLS</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }} />
+            <TableCell sx={{ fontWeight: "bold" }}>
+              EXPERIENCE IN YEARS
+            </TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>LAST USED</TableCell>
+          </TableRow>
+        </TableHead>
 
-          <TableBody>
-            {Object.entries(groupedSkills).map(([category, list]) => (
-              <React.Fragment key={category}>
-                {list.map((s, idx) => (
-                  <TableRow key={s.name}>
-                    <TableCell
-                      sx={{
-                        fontWeight: "bold",
-                        color: "error.main",
-                        borderBottom: idx === 0 ? undefined : "none",
-                        pt: idx === 0 ? 2 : 0,
-                      }}
-                    >
-                      {idx === 0 ? category : ""}
-                    </TableCell>
-                    <TableCell sx={{ pl: 2 }}>{s.name}</TableCell>
-                    <TableCell>0</TableCell>
-                    <TableCell>2025</TableCell>
-                  </TableRow>
-                ))}
-              </React.Fragment>
-            ))}
-          </TableBody>
-        </Table>
+        <TableBody>
+          {Object.entries(groupedSkills).map(([category, list]) => {
+            return list.map((s, idx) => {
+              const { experience, lastUsed } = getSkillUsageInfo(
+                s.name,
+                projects
+              );
+              const isLast = idx === list.length - 1;
+
+              return (
+                <TableRow
+                  key={`${category}-${s.name}`}
+                  sx={{
+                    borderBottom: isLast
+                      ? "1px solid rgba(255, 255, 255, 0.12)"
+                      : "none",
+                  }}
+                >
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      color: "error.main",
+                      verticalAlign: "top",
+                      pt: 2,
+                      borderBottom: "none",
+                    }}
+                  >
+                    {idx === 0 ? category : ""}
+                  </TableCell>
+                  <TableCell sx={{ pl: 2, borderBottom: "none" }}>
+                    {s.name}
+                  </TableCell>
+                  <TableCell sx={{ borderBottom: "none" }}>
+                    {experience > 0 ? experience : ""}
+                  </TableCell>
+                  <TableCell sx={{ borderBottom: "none" }}>
+                    {lastUsed || ""}
+                  </TableCell>
+                </TableRow>
+              );
+            });
+          })}
+        </TableBody>
       </Table>
     </Box>
   );
