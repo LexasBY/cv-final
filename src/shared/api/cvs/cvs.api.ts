@@ -51,6 +51,10 @@ export const GET_CV_BY_ID = gql`
         profile {
           full_name
         }
+        position {
+          id
+          name
+        }
       }
       skills {
         name

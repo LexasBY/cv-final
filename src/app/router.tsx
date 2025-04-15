@@ -13,7 +13,7 @@ import { CVPage } from "../pages/cv/ui/CVPage";
 import { CVDetailsPage } from "../pages/cv/ui/CVDetailsPage";
 import { CvSkillsPage } from "../features/CvSkills/ui/CvSkillsPage";
 import { CVProjectsPage } from "../features/CvProjects/ui/CVProjectsPage";
-// import { CVPreviewPage } from "../pages/cv/ui/CVPreviewPage";
+import { CVPreviewPage } from "../features/CvPrewiew/ui/CVPreviewPage";
 
 export const Router = () => (
   <Routes>
@@ -35,7 +35,7 @@ export const Router = () => (
         <Route path="details" element={<CVDetailsPage />} />
         <Route path="skills" element={<CvSkillsPage />} />
         <Route path="projects" element={<CVProjectsPage />} />
-        {/*<Route path="preview" element={<CVPreviewPage />} /> */}
+        <Route path="preview" element={<CVPreviewPage />} />
       </Route>
     </Route>
 
