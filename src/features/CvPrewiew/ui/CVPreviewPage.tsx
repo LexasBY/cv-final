@@ -11,19 +11,17 @@ import {
   TableCell,
   TableBody,
 } from "@mui/material";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
 import { useCvContext } from "../../../pages/cv/model/useCvContext";
 import { Mastery, Proficiency } from "../../../shared/api/graphql/generated";
 import { groupSkillsByParentCategory } from "../../../shared/lib/skills/groupSkillsByParent";
 import { getSkillUsageInfo } from "../../../shared/lib/skills/getSkillUsageInfo";
+import { useExportPdf } from "../model/useExportPdf";
+import { prepareHtml } from "../model/prepareHtml";
 
 export const CVPreviewPage: React.FC = () => {
   const { cv, skillCategories } = useCvContext();
-
-  const mainRef = useRef<HTMLDivElement>(null);
-  const projectsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const skillsRef = useRef<HTMLDivElement>(null);
+  const { exportPdf } = useExportPdf();
+  const contentRef = useRef<HTMLDivElement>(null);
 
   if (!cv) {
     return (
@@ -45,76 +43,35 @@ export const CVPreviewPage: React.FC = () => {
   const getMasteryLabel = (level: Mastery) => level;
   const getProficiencyLabel = (level: Proficiency) => level;
 
-  const exportPdf = async () => {
+  const handleExport = async () => {
+    if (!contentRef.current) return;
+
+    const html = prepareHtml(contentRef.current);
+
     try {
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const margin = 10;
-      const usableWidth = pdfWidth - 2 * margin;
-
-      const captureAndAdd = async (el: HTMLElement, addPage = false) => {
-        const canvas = await html2canvas(el, {
-          scale: 1.5,
-          backgroundColor: "#ffffff",
-          useCORS: true,
-          onclone: (doc) => {
-            const style = doc.createElement("style");
-            style.innerHTML = `* { color: #000 !important; background: #fff !important; }`;
-            doc.head.appendChild(style);
-          },
-        });
-
-        const imgData = canvas.toDataURL("image/png");
-        if (!imgData || imgData.length < 1000) return;
-
-        const imgHeight = (canvas.height * usableWidth) / canvas.width;
-        const pageHeight = pdfHeight - 2 * margin;
-
-        if (imgHeight <= pageHeight) {
-          if (addPage) pdf.addPage();
-          pdf.addImage(imgData, "PNG", margin, margin, usableWidth, imgHeight);
-        } else {
-          let position = 0;
-          if (addPage) pdf.addPage();
-          while (position < imgHeight) {
-            if (position !== 0) pdf.addPage();
-            pdf.addImage(
-              imgData,
-              "PNG",
-              margin,
-              margin - position,
-              usableWidth,
-              imgHeight
-            );
-            position += pageHeight;
-          }
-        }
-      };
-
-      if (mainRef.current) await captureAndAdd(mainRef.current);
-      if (projectsRef.current.length > 0) {
-        for (let i = 0; i < projectsRef.current.length; i++) {
-          const ref = projectsRef.current[i];
-          if (ref) await captureAndAdd(ref, true);
-        }
+      const base64pdf = await exportPdf(html);
+      if (base64pdf) {
+        const blob = new Blob(
+          [Uint8Array.from(atob(base64pdf), (c) => c.charCodeAt(0))],
+          { type: "application/pdf" }
+        );
+        const url = URL.createObjectURL(blob);
+        window.open(url);
       }
-      if (skillsRef.current) await captureAndAdd(skillsRef.current, true);
-      pdf.save(`${cv.name || "cv"}.pdf`);
-    } catch (error) {
-      console.error("Ошибка при экспорте PDF", error);
+    } catch (err) {
+      console.error("PDF export failed", err);
     }
   };
 
   return (
     <Box sx={{ p: 4, maxWidth: 1200, mx: "auto", fontSize: "1.2rem" }}>
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-        <Button variant="outlined" color="error" onClick={exportPdf}>
+        <Button variant="outlined" color="error" onClick={handleExport}>
           EXPORT PDF
         </Button>
       </Box>
 
-      <Box ref={mainRef}>
+      <Box ref={contentRef} id="cv-html-content">
         <Box sx={{ mb: 3 }}>
           <Typography variant="h3" fontWeight="bold">
             {user?.profile.full_name}
@@ -171,68 +128,58 @@ export const CVPreviewPage: React.FC = () => {
             ))}
           </Grid>
         </Grid>
-      </Box>
 
-      <Divider sx={{ my: 4 }} />
-      {projects.map((proj, idx) => (
-        <Box
-          key={proj.id}
-          ref={(el) => {
-            projectsRef.current[idx] = el as HTMLDivElement | null;
-          }}
-          sx={{ mb: 4 }}
-        >
-          {idx === 0 && (
-            <Typography variant="h5" gutterBottom>
-              Projects
-            </Typography>
-          )}
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <Typography variant="h6" color="error" fontWeight="bold">
-                {proj.name}
-              </Typography>
-              <Typography>{proj.description}</Typography>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              {proj.roles?.length > 0 && (
-                <Box mb={1}>
-                  <Typography fontWeight="bold">Project roles</Typography>
-                  <Typography>{proj.roles.join(", ")}</Typography>
-                </Box>
-              )}
-              <Box mb={1}>
-                <Typography fontWeight="bold">Period</Typography>
-                <Typography>
-                  {proj.start_date?.slice(0, 7)} –{" "}
-                  {proj.end_date?.slice(0, 7) || "Till now"}
+        <Divider sx={{ my: 4 }} />
+        <Typography variant="h5" gutterBottom>
+          Projects
+        </Typography>
+        {projects.map((proj) => (
+          <Box key={proj.id} sx={{ mb: 4 }}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <Typography variant="h6" color="error" fontWeight="bold">
+                  {proj.name}
                 </Typography>
-              </Box>
-              {proj.responsibilities?.length > 0 && (
+                <Typography>{proj.description}</Typography>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                {proj.roles?.length > 0 && (
+                  <Box mb={1}>
+                    <Typography fontWeight="bold">Project roles</Typography>
+                    <Typography>{proj.roles.join(", ")}</Typography>
+                  </Box>
+                )}
                 <Box mb={1}>
-                  <Typography fontWeight="bold">Responsibilities</Typography>
-                  <ul style={{ margin: 0, paddingLeft: "1rem" }}>
-                    {proj.responsibilities.map((r, i) => (
-                      <li key={i}>
-                        <Typography>{r}</Typography>
-                      </li>
-                    ))}
-                  </ul>
+                  <Typography fontWeight="bold">Period</Typography>
+                  <Typography>
+                    {proj.start_date?.slice(0, 7)} –{" "}
+                    {proj.end_date?.slice(0, 7) || "Till now"}
+                  </Typography>
                 </Box>
-              )}
-              {proj.environment?.length > 0 && (
-                <Box>
-                  <Typography fontWeight="bold">Environment</Typography>
-                  <Typography>{proj.environment.join(", ")}</Typography>
-                </Box>
-              )}
+                {proj.responsibilities?.length > 0 && (
+                  <Box mb={1}>
+                    <Typography fontWeight="bold">Responsibilities</Typography>
+                    <ul style={{ margin: 0, paddingLeft: "1rem" }}>
+                      {proj.responsibilities.map((r, i) => (
+                        <li key={i}>
+                          <Typography>{r}</Typography>
+                        </li>
+                      ))}
+                    </ul>
+                  </Box>
+                )}
+                {proj.environment?.length > 0 && (
+                  <Box>
+                    <Typography fontWeight="bold">Environment</Typography>
+                    <Typography>{proj.environment.join(", ")}</Typography>
+                  </Box>
+                )}
+              </Grid>
             </Grid>
-          </Grid>
-        </Box>
-      ))}
+          </Box>
+        ))}
 
-      <Divider sx={{ my: 4 }} />
-      <Box ref={skillsRef}>
+        <Divider sx={{ my: 4 }} />
         <Typography variant="h5" gutterBottom>
           Professional skills
         </Typography>
