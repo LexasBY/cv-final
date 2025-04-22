@@ -54,7 +54,7 @@ export const UserProfile = ({
           onClick={handleAvatarClick}
           sx={{
             cursor: "pointer",
-            bgcolor: avatar ? "transparent" : "gray",
+            bgcolor: avatar ? "transparent" : "grey.800",
             width: 40,
             height: 40,
             mr: 1,
@@ -80,7 +80,12 @@ export const UserProfile = ({
         <MenuItem onClick={() => navigate(`/users/${userId}`)}>
           <AccountCircle sx={{ marginRight: 1 }} /> Profile
         </MenuItem>
-        <MenuItem>
+        <MenuItem
+          onClick={() => {
+            navigate("/settings");
+            handleClose();
+          }}
+        >
           <Settings sx={{ marginRight: 1 }} /> Settings
         </MenuItem>
         <MenuItem onClick={handleLogout}>

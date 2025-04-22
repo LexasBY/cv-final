@@ -14,6 +14,7 @@ import { CVDetailsPage } from "../pages/cv/ui/CVDetailsPage";
 import { CvSkillsPage } from "../features/CvSkills/ui/CvSkillsPage";
 import { CVProjectsPage } from "../features/CvProjects/ui/CVProjectsPage";
 import { CVPreviewPage } from "../features/CvPrewiew/ui/CVPreviewPage";
+import { SettingsPage } from "../pages/settings/SettingsPage";
 
 export const Router = () => (
   <Routes>
@@ -25,6 +26,7 @@ export const Router = () => (
       <Route path="/skills" element={<SkillsPage />} />
       <Route path="/languages" element={<LanguagesPage />} />
       <Route path="/cvs" element={<CvsPage />} />
+      <Route path="/settings" element={<SettingsPage />} />
 
       <Route path="/users/:userId" element={<ProfilePage />}>
         <Route path="skills" element={<SkillsPage />} />
