@@ -13,6 +13,7 @@ import {
   Mastery,
 } from "../../../shared/api/graphql/generated";
 import { CvSkillsActions } from "./CvSkillsActions"; // или просто SkillsActions, если переиспользуешь
+import { groupSkillsByParentCategory } from "../../../shared/lib/skills/groupSkillsByParent";
 
 type CvSkillsListProps = {
   skills: SkillMastery[];
@@ -63,29 +64,7 @@ export const CvSkillsList: React.FC<CvSkillsListProps> = ({
   if (loading) return <CircularProgress />;
   if (error) return <Typography color="error">Error loading skills</Typography>;
 
-  const categoryMap = categories.reduce<Record<string, SkillCategory>>(
-    (acc, cat) => {
-      acc[cat.id] = cat;
-      return acc;
-    },
-    {}
-  );
-
-  const groupedByParent: Record<string, SkillMastery[]> = {};
-  skills.forEach((skill) => {
-    const categoryId = skill.categoryId ?? undefined;
-    const category = categoryId ? categoryMap[categoryId] : undefined;
-    const parentCategory = category?.parent
-      ? categoryMap[category.parent.id]
-      : category;
-    const parentName = parentCategory?.name || "Other";
-
-    if (!groupedByParent[parentName]) {
-      groupedByParent[parentName] = [];
-    }
-
-    groupedByParent[parentName].push(skill);
-  });
+  const groupedByParent = groupSkillsByParentCategory(skills, categories);
 
   const isSelected = (name: string) => selectedForDelete.includes(name);
 

@@ -51,6 +51,10 @@ export const GET_CV_BY_ID = gql`
         profile {
           full_name
         }
+        position {
+          id
+          name
+        }
       }
       skills {
         name
@@ -151,5 +155,11 @@ export const DELETE_CV_SKILL = gql`
         categoryId
       }
     }
+  }
+`;
+
+export const EXPORT_PDF = gql`
+  mutation ExportPdf($pdf: ExportPdfInput!) {
+    exportPdf(pdf: $pdf)
   }
 `;

@@ -92,7 +92,6 @@ export const AuthForm = ({ type }: AuthFormProps) => {
           id="password"
           label="Password"
           type={showPassword ? "text" : "password"}
-          // Передаём autoComplete через inputProps
           inputProps={{
             autoComplete:
               type === "login" ? "current-password" : "new-password",
