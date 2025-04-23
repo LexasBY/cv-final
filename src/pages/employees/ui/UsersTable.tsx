@@ -97,7 +97,7 @@ export const UsersTable = ({
               user.email.charAt(0).toUpperCase();
 
             return (
-              <TableRow key={user.id} hover>
+              <TableRow key={user.id}>
                 <TableCell>
                   <Avatar
                     src={user.profile.avatar || undefined}
