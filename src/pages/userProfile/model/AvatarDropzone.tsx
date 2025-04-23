@@ -62,7 +62,7 @@ export const AvatarDropzone: React.FC<Props> = ({
           <IconButton
             size="small"
             onClick={(e) => {
-              e.stopPropagation(); // не активировать dropzone при удалении
+              e.stopPropagation();
               onRemove();
             }}
             sx={{
@@ -85,7 +85,7 @@ export const AvatarDropzone: React.FC<Props> = ({
             <IconButton
               color="primary"
               onClick={(e) => {
-                e.stopPropagation(); // чтобы клик не активировал drag-n-drop
+                e.stopPropagation();
                 open();
               }}
             >
@@ -99,7 +99,6 @@ export const AvatarDropzone: React.FC<Props> = ({
         </Box>
       )}
 
-      {/* input должен быть внутри Dropzone */}
       <input {...getInputProps()} />
     </Box>
   );

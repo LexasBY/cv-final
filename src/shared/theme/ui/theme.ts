@@ -4,21 +4,12 @@ export const lightTheme = createTheme({
   palette: {
     mode: "light",
     background: {
-      default: "#f5f5f5",
-      paper: "#ffffff",
+      default: "rgb(241, 233, 233)",
+      paper: "rgb(241, 233, 233)",
     },
     text: {
-      primary: "#000000",
-      secondary: "#555555",
-    },
-  },
-  components: {
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          backgroundImage: "none",
-        },
-      },
+      primary: "#000",
+      secondary: "#333",
     },
   },
 });
@@ -27,21 +18,12 @@ export const darkTheme = createTheme({
   palette: {
     mode: "dark",
     background: {
-      default: "#121212",
-      paper: "#1e1e1e",
+      default: "rgb(53, 53, 53)",
+      paper: "rgb(53, 53, 53)",
     },
     text: {
       primary: "#ffffff",
-      secondary: "#bbbbbb",
-    },
-  },
-  components: {
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          backgroundImage: "none",
-        },
-      },
+      secondary: "#bdbdbd",
     },
   },
 });

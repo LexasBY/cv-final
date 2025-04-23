@@ -24,6 +24,7 @@ export const UserProfile = ({
   };
 
   const handleClose = () => {
+    (document.activeElement as HTMLElement)?.blur();
     setAnchorEl(null);
   };
 
@@ -76,20 +77,37 @@ export const UserProfile = ({
         />
       </Box>
 
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-        <MenuItem onClick={() => navigate(`/users/${userId}`)}>
-          <AccountCircle sx={{ marginRight: 1 }} /> Profile
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        disableAutoFocus
+        disableEnforceFocus
+        disableRestoreFocus
+      >
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            navigate(`/users/${userId}`);
+          }}
+        >
+          <AccountCircle sx={{ mr: 1 }} /> Profile
         </MenuItem>
         <MenuItem
           onClick={() => {
-            navigate("/settings");
             handleClose();
+            navigate("/settings");
           }}
         >
-          <Settings sx={{ marginRight: 1 }} /> Settings
+          <Settings sx={{ mr: 1 }} /> Settings
         </MenuItem>
-        <MenuItem onClick={handleLogout}>
-          <Logout sx={{ marginRight: 1 }} /> Logout
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            handleLogout();
+          }}
+        >
+          <Logout sx={{ mr: 1 }} /> Logout
         </MenuItem>
       </Menu>
     </>
