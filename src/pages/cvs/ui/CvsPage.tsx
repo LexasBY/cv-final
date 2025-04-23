@@ -11,10 +11,12 @@ import { useCreateCv } from "../../../features/Cvs/model/useCreateCv";
 import { useApolloClient } from "@apollo/client";
 import { ConfirmDeleteModal } from "../../../shared/ui/Modals/ConfirmDeleteModal";
 import { useDeleteCv } from "../../../features/Cvs/model/useDeleteCv";
+import { useTranslation } from "react-i18next";
 
 export const CvsPage: React.FC = () => {
   const navigate = useNavigate();
   const client = useApolloClient();
+  const { t } = useTranslation();
 
   const {
     loading,
@@ -80,6 +82,7 @@ export const CvsPage: React.FC = () => {
       console.error("Error creating CV", e);
     }
   };
+
   const handleDeleteOpen = () => {
     setIsDeleteModalOpen(true);
     setMenuAnchor(null);
@@ -100,13 +103,13 @@ export const CvsPage: React.FC = () => {
     setIsDeleteModalOpen(false);
   };
 
-  if (loading) return <Box sx={{ p: 3 }}>Loading...</Box>;
-  if (error) return <Box sx={{ p: 3 }}>Error fetching CVs</Box>;
+  if (loading) return <Box sx={{ p: 3 }}>{t("Loading")}...</Box>;
+  if (error) return <Box sx={{ p: 3 }}>{t("Error fetching CVs")}</Box>;
 
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold" }}>
-        CVs
+        {t("CVs")}
       </Typography>
 
       <Box
@@ -139,7 +142,7 @@ export const CvsPage: React.FC = () => {
           }}
           startIcon={<AddIcon />}
         >
-          Create CV
+          {t("Create CV")}
         </Button>
       </Box>
 
@@ -164,10 +167,10 @@ export const CvsPage: React.FC = () => {
               handleMenuClose();
             }}
           >
-            Details
+            {t("Details")}
           </MenuItem>,
           <MenuItem key="delete" onClick={handleDeleteOpen}>
-            Delete
+            {t("Delete")}
           </MenuItem>,
         ]}
       </Menu>

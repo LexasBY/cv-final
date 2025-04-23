@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { CvProject } from "../../../shared/api/graphql/generated";
+import { useTranslation } from "react-i18next";
 
 interface ProjectsTableProps {
   projects: CvProject[];
@@ -32,6 +33,7 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({
   onEditClick,
   onDeleteClick,
 }) => {
+  const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedProject, setSelectedProject] = useState<CvProject | null>(
     null
@@ -58,7 +60,7 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({
   const formatDate = (dateStr?: string | null) => {
     if (!dateStr) return "—";
     const date = new Date(dateStr);
-    return date.toLocaleDateString("en-GB");
+    return date.toLocaleDateString();
   };
 
   return (
@@ -74,7 +76,7 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({
                 direction={sortColumn === "name" ? sortDirection : "asc"}
                 onClick={createSortHandler("name")}
               >
-                Name
+                {t("Name")}
               </TableSortLabel>
             </TableCell>
             <TableCell
@@ -85,7 +87,7 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({
                 direction={sortColumn === "domain" ? sortDirection : "asc"}
                 onClick={createSortHandler("domain")}
               >
-                Domain
+                {t("Domain")}
               </TableSortLabel>
             </TableCell>
             <TableCell
@@ -98,7 +100,7 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({
                 direction={sortColumn === "start_date" ? sortDirection : "asc"}
                 onClick={createSortHandler("start_date")}
               >
-                Start Date
+                {t("Start Date")}
               </TableSortLabel>
             </TableCell>
             <TableCell
@@ -109,7 +111,7 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({
                 direction={sortColumn === "end_date" ? sortDirection : "asc"}
                 onClick={createSortHandler("end_date")}
               >
-                End Date
+                {t("End Date")}
               </TableSortLabel>
             </TableCell>
             <TableCell align="right" />
@@ -120,7 +122,7 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({
             <TableRow sx={{ "& td": { borderBottom: "none" } }}>
               <TableCell colSpan={5} align="center">
                 <Typography variant="h6" sx={{ my: 3 }}>
-                  No results found
+                  {t("No results found")}
                 </Typography>
               </TableCell>
             </TableRow>
@@ -170,7 +172,6 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({
         <MenuItem
           onClick={() => {
             if (selectedProject) {
-              console.log("Edit project clicked", selectedProject);
               onEditClick?.({
                 ...selectedProject,
                 project: selectedProject.project ?? {
@@ -182,7 +183,7 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({
             handleMenuClose();
           }}
         >
-          Update project
+          {t("Update project")}
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -190,7 +191,7 @@ export const ProjectsTable: React.FC<ProjectsTableProps> = ({
             handleMenuClose();
           }}
         >
-          Remove project
+          {t("Remove project")}
         </MenuItem>
       </Menu>
     </Box>

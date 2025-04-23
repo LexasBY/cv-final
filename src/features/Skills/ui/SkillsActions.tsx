@@ -3,6 +3,7 @@ import { Box, Button, Stack } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CancelIcon from "@mui/icons-material/Cancel";
+import { useTranslation } from "react-i18next";
 
 type SkillsActionsProps = {
   hasSkills: boolean;
@@ -23,6 +24,8 @@ export const SkillsActions: React.FC<SkillsActionsProps> = ({
   onDeleteCancel,
   onDeleteConfirm,
 }) => {
+  const { t } = useTranslation();
+
   if (isDeleteMode) {
     return (
       <Box display="flex" justifyContent="flex-end" mt={2}>
@@ -41,7 +44,7 @@ export const SkillsActions: React.FC<SkillsActionsProps> = ({
               },
             }}
           >
-            CANCEL
+            {t("Cancel")}
           </Button>
 
           <Button
@@ -59,13 +62,13 @@ export const SkillsActions: React.FC<SkillsActionsProps> = ({
               gap: 1,
             }}
           >
-            DELETE
+            {t("Delete")}
             {deleteCount > 0 && (
               <Box
                 sx={{
                   ml: 1,
                   backgroundColor: "#fff",
-                  color: "#d32f2f", // MUI "error" red
+                  color: "#d32f2f",
                   fontSize: "14px",
                   fontWeight: "bold",
                   width: 24,
@@ -93,7 +96,7 @@ export const SkillsActions: React.FC<SkillsActionsProps> = ({
           onClick={onAdd}
           sx={{ color: "gray", borderRadius: 5 }}
         >
-          ADD SKILL
+          {t("Add Skill")}
         </Button>
         {hasSkills && (
           <Button
@@ -101,7 +104,7 @@ export const SkillsActions: React.FC<SkillsActionsProps> = ({
             onClick={onRemove}
             sx={{ color: "red", borderRadius: 5 }}
           >
-            REMOVE SKILLS
+            {t("Remove Skills")}
           </Button>
         )}
       </Stack>

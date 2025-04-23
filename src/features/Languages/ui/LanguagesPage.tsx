@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
+import { useTranslation } from "react-i18next";
 
 import { LanguagesList } from "./LanguagesList";
 import { GenericModal } from "../../../shared/ui/Modals/GenericModal";
@@ -24,6 +25,7 @@ import {
 import { useLanguagesMutations } from "../model/useLanguagesMutations";
 
 export const LanguagesPage: React.FC = () => {
+  const { t } = useTranslation();
   const { userId: routeUserId } = useParams<{ userId?: string }>();
   const userId = routeUserId ?? localStorage.getItem("userId");
 
@@ -81,9 +83,9 @@ export const LanguagesPage: React.FC = () => {
   if (profileLoading || languagesLoading || !userId)
     return <CircularProgress />;
   if (profileError || languagesError)
-    return <Typography color="error">Error loading data</Typography>;
+    return <Typography color="error">{t("Error loading data")}</Typography>;
   if (!profileData?.profile || !allLanguagesData)
-    return <Typography color="error">No data</Typography>;
+    return <Typography color="error">{t("No data")}</Typography>;
 
   const handleAddLanguage = async (name: string, proficiency: string) => {
     try {
@@ -98,11 +100,15 @@ export const LanguagesPage: React.FC = () => {
       });
       setSnackbar({
         open: true,
-        message: "Language added",
+        message: t("Language added"),
         severity: "success",
       });
     } catch {
-      setSnackbar({ open: true, message: "Add failed", severity: "error" });
+      setSnackbar({
+        open: true,
+        message: t("Add failed"),
+        severity: "error",
+      });
     } finally {
       setOpenAdd(false);
     }
@@ -120,9 +126,17 @@ export const LanguagesPage: React.FC = () => {
           },
         },
       });
-      setSnackbar({ open: true, message: "Updated", severity: "success" });
+      setSnackbar({
+        open: true,
+        message: t("Updated"),
+        severity: "success",
+      });
     } catch {
-      setSnackbar({ open: true, message: "Update failed", severity: "error" });
+      setSnackbar({
+        open: true,
+        message: t("Update failed"),
+        severity: "error",
+      });
     } finally {
       setSelectedLanguage(null);
     }
@@ -138,9 +152,13 @@ export const LanguagesPage: React.FC = () => {
           },
         },
       });
-      setSnackbar({ open: true, message: "Deleted", severity: "success" });
+      setSnackbar({ open: true, message: t("Deleted"), severity: "success" });
     } catch {
-      setSnackbar({ open: true, message: "Delete failed", severity: "error" });
+      setSnackbar({
+        open: true,
+        message: t("Delete failed"),
+        severity: "error",
+      });
     } finally {
       setLanguagesToDelete([]);
       setIsDeleteMode(false);
@@ -150,8 +168,9 @@ export const LanguagesPage: React.FC = () => {
   return (
     <Box sx={{ px: 4, py: 3, mx: "auto", maxWidth: 1200 }}>
       <Typography variant="h5" sx={{ mb: 3, fontWeight: "bold" }}>
-        Languages
+        {t("Languages")}
       </Typography>
+
       <LanguagesList
         languages={profileData.profile.languages}
         onAdd={() => setOpenAdd(true)}
@@ -178,9 +197,9 @@ export const LanguagesPage: React.FC = () => {
           open={openAdd}
           onClose={() => setOpenAdd(false)}
           onConfirm={handleAddLanguage}
-          title="Add language"
-          itemLabel="Language"
-          levelLabel="Language proficiency"
+          title={t("Add language")}
+          itemLabel={t("Language")}
+          levelLabel={t("Language proficiency")}
           options={availableLanguages.map((l: Language) => ({
             label: l.name,
             value: l.name,
@@ -194,9 +213,9 @@ export const LanguagesPage: React.FC = () => {
           open
           onClose={() => setSelectedLanguage(null)}
           onConfirm={(_, proficiency) => handleUpdateLanguage(proficiency)}
-          title="Update language"
-          itemLabel="Language"
-          levelLabel="Language proficiency"
+          title={t("Update language")}
+          itemLabel={t("Language")}
+          levelLabel={t("Language proficiency")}
           options={[
             { label: selectedLanguage.name, value: selectedLanguage.name },
           ]}

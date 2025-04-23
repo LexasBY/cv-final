@@ -10,6 +10,7 @@ import {
 import { AccountCircle, Settings, Logout } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { client } from "../../../shared/api/apolloClient";
+import { useTranslation } from "react-i18next";
 
 interface UserProfileProps {
   userName: string;
@@ -24,6 +25,7 @@ export const UserProfile = ({
   isCollapsed,
   avatar,
 }: UserProfileProps) => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -101,7 +103,7 @@ export const UserProfile = ({
             navigate(`/users/${userId}`);
           }}
         >
-          <AccountCircle sx={{ mr: theme.spacing(1) }} /> Profile
+          <AccountCircle sx={{ mr: theme.spacing(1) }} /> {t("Profile")}
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -109,7 +111,7 @@ export const UserProfile = ({
             navigate("/settings");
           }}
         >
-          <Settings sx={{ mr: theme.spacing(1) }} /> Settings
+          <Settings sx={{ mr: theme.spacing(1) }} /> {t("Settings")}
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -117,7 +119,7 @@ export const UserProfile = ({
             handleLogout();
           }}
         >
-          <Logout sx={{ mr: theme.spacing(1) }} /> Logout
+          <Logout sx={{ mr: theme.spacing(1) }} /> {t("Logout")}
         </MenuItem>
       </Menu>
     </>

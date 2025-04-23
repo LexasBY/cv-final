@@ -3,8 +3,10 @@ import { useLocation, useParams, Outlet, useNavigate } from "react-router-dom";
 import { Box, Tabs, Tab, Typography, Link as MuiLink } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { useCvContext } from "../model/useCvContext";
+import { useTranslation } from "react-i18next";
 
 export const CVPageContent: React.FC = () => {
+  const { t } = useTranslation();
   const { cv } = useCvContext();
   const { cvId } = useParams();
   const location = useLocation();
@@ -31,7 +33,7 @@ export const CVPageContent: React.FC = () => {
             "&:hover": { textDecoration: "underline" },
           }}
         >
-          CVs
+          {t("CVs")}
         </MuiLink>{" "}
         &gt; {cv?.name || "—"}
       </Typography>
@@ -43,10 +45,10 @@ export const CVPageContent: React.FC = () => {
         textColor="primary"
         indicatorColor="primary"
       >
-        <Tab label="Details" value="details" />
-        <Tab label="Skills" value="skills" />
-        <Tab label="Projects" value="projects" />
-        <Tab label="Preview" value="preview" />
+        <Tab label={t("Details")} value="details" />
+        <Tab label={t("Skills")} value="skills" />
+        <Tab label={t("Projects")} value="projects" />
+        <Tab label={t("Preview")} value="preview" />
       </Tabs>
 
       <Outlet />

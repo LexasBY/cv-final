@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
+import { useTranslation } from "react-i18next";
 
 import {
   GET_USER_SKILLS,
@@ -25,6 +26,7 @@ import { GenericModal } from "../../../shared/ui/Modals/GenericModal";
 import { useSkillsMutations } from "../model/useSkillsMutations";
 
 export const SkillsPage: React.FC = () => {
+  const { t } = useTranslation();
   const { userId: routeUserId } = useParams<{ userId?: string }>();
   const userId = routeUserId ?? localStorage.getItem("userId");
 
@@ -83,9 +85,9 @@ export const SkillsPage: React.FC = () => {
   if (skillsLoading || categoriesLoading || allSkillsLoading || !userId)
     return <CircularProgress />;
   if (skillsError || categoriesError || allSkillsError)
-    return <Typography color="error">Error loading data</Typography>;
+    return <Typography color="error">{t("Error loading data")}</Typography>;
   if (!skillsData?.profile || !categoriesData || !allSkillsData)
-    return <Typography color="error">No profile data found</Typography>;
+    return <Typography color="error">{t("No profile data found")}</Typography>;
 
   const handleAddSkill = async (skillName: string, mastery: string) => {
     const skill = allSkillsData.skills.find((s: Skill) => s.name === skillName);
@@ -102,9 +104,13 @@ export const SkillsPage: React.FC = () => {
           },
         },
       });
-      setSnackbar({ open: true, message: "Skill added", severity: "success" });
+      setSnackbar({
+        open: true,
+        message: t("Skill added"),
+        severity: "success",
+      });
     } catch {
-      setSnackbar({ open: true, message: "Add failed", severity: "error" });
+      setSnackbar({ open: true, message: t("Add failed"), severity: "error" });
     } finally {
       setOpenAdd(false);
     }
@@ -130,11 +136,15 @@ export const SkillsPage: React.FC = () => {
       });
       setSnackbar({
         open: true,
-        message: "Skill updated",
+        message: t("Skill updated"),
         severity: "success",
       });
     } catch {
-      setSnackbar({ open: true, message: "Update failed", severity: "error" });
+      setSnackbar({
+        open: true,
+        message: t("Update failed"),
+        severity: "error",
+      });
     } finally {
       setSelectedSkill(null);
     }
@@ -149,11 +159,15 @@ export const SkillsPage: React.FC = () => {
       );
       setSnackbar({
         open: true,
-        message: "Skills deleted",
+        message: t("Skills deleted"),
         severity: "success",
       });
     } catch {
-      setSnackbar({ open: true, message: "Delete failed", severity: "error" });
+      setSnackbar({
+        open: true,
+        message: t("Delete failed"),
+        severity: "error",
+      });
     } finally {
       setSkillsToDelete([]);
       setIsDeleteMode(false);
@@ -163,7 +177,7 @@ export const SkillsPage: React.FC = () => {
   return (
     <Box sx={{ px: 4, py: 3, mx: "auto", maxWidth: 1200 }}>
       <Typography variant="h5" sx={{ mb: 3, fontWeight: "bold" }}>
-        Skills
+        {t("Skills")}
       </Typography>
       <SkillsList
         skills={skillsData.profile.skills}
@@ -195,9 +209,9 @@ export const SkillsPage: React.FC = () => {
           open={openAdd}
           onClose={() => setOpenAdd(false)}
           onConfirm={handleAddSkill}
-          title="Add skill"
-          itemLabel="Skill"
-          levelLabel="Skill mastery"
+          title={t("Add skill")}
+          itemLabel={t("Skill")}
+          levelLabel={t("Skill mastery")}
           options={availableSkillsToAdd.map((s: Skill) => ({
             label: s.name,
             value: s.name,
@@ -211,9 +225,9 @@ export const SkillsPage: React.FC = () => {
           open
           onClose={() => setSelectedSkill(null)}
           onConfirm={(_, mastery) => handleUpdateSkill(mastery)}
-          title="Update skill"
-          itemLabel="Skill"
-          levelLabel="Skill mastery"
+          title={t("Update skill")}
+          itemLabel={t("Skill")}
+          levelLabel={t("Skill mastery")}
           options={[{ label: selectedSkill.name, value: selectedSkill.name }]}
           levels={masteryOptions}
           disableItemSelect

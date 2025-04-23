@@ -1,5 +1,6 @@
 import { TextField, InputAdornment } from "@mui/material";
 import { Search } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
 
 type SearchInputProps = {
   value: string;
@@ -11,14 +12,17 @@ type SearchInputProps = {
 export const SearchInput = ({
   value,
   onChange,
-  placeholder = "Search",
+  placeholder,
   fullWidth = true,
 }: SearchInputProps) => {
+  const { t } = useTranslation();
+  const translatedPlaceholder = placeholder || t("Search");
+
   return (
     <TextField
       fullWidth={fullWidth}
       variant="outlined"
-      placeholder={placeholder}
+      placeholder={translatedPlaceholder}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       sx={{

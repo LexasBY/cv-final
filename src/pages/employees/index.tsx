@@ -6,8 +6,10 @@ import { UsersTable } from "./ui/UsersTable";
 import { SortColumn } from "./model/useUsers";
 import { User } from "../../shared/api/graphql/generated";
 import { SearchInput } from "../../shared/ui/SearchInput";
+import { useTranslation } from "react-i18next";
 
 export const UsersPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const {
     loading,
@@ -24,8 +26,8 @@ export const UsersPage = () => {
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  if (loading) return <Box>Loading...</Box>;
-  if (error) return <Box>Error fetching users</Box>;
+  if (loading) return <Box>{t("Loading")}...</Box>;
+  if (error) return <Box>{t("Error fetching users")}</Box>;
 
   const handleSort = (column: SortColumn) => {
     setSortDirection((prev) =>
@@ -54,7 +56,7 @@ export const UsersPage = () => {
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold" }}>
-        Employees
+        {t("Employees")}
       </Typography>
 
       <Box sx={{ mb: 2, maxWidth: 400 }}>
@@ -75,25 +77,20 @@ export const UsersPage = () => {
         open={Boolean(menuAnchor)}
         onClose={handleMenuClose}
       >
-        {selectedUser && [
+        {selectedUser && (
           <>
             <MenuItem
-              key="profile"
               onClick={() => {
-                if (selectedUser?.id) {
-                  navigate(`/users/${selectedUser.id}`);
-                } else {
-                  console.warn("No selected user ID found");
-                }
+                navigate(`/users/${selectedUser.id}`);
                 handleMenuClose();
               }}
             >
-              Profile
+              {t("Profile")}
             </MenuItem>
-            <MenuItem key="update">Update User</MenuItem>
-          </>,
-          <MenuItem key="delete">Delete User</MenuItem>,
-        ]}
+            <MenuItem>{t("Update User")}</MenuItem>
+            <MenuItem>{t("Delete User")}</MenuItem>
+          </>
+        )}
       </Menu>
     </Box>
   );

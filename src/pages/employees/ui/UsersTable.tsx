@@ -15,6 +15,7 @@ import {
 import { MoreVert, ChevronRight } from "@mui/icons-material";
 import { SortColumn } from "../model/useUsers";
 import { User } from "../../../shared/api/graphql/generated";
+import { useTranslation } from "react-i18next";
 
 export type UsersTableProps = {
   users: User[];
@@ -34,6 +35,7 @@ export const UsersTable = ({
   onMenuOpen,
 }: UsersTableProps) => {
   const theme = useTheme();
+  const { t } = useTranslation();
 
   return (
     <TableContainer component={Paper} sx={{ maxHeight: "80vh" }}>
@@ -47,7 +49,7 @@ export const UsersTable = ({
                 direction={sortDirection}
                 onClick={() => onSort("first_name")}
               >
-                First Name
+                {t("First Name")}
               </TableSortLabel>
             </TableCell>
             <TableCell>
@@ -56,7 +58,7 @@ export const UsersTable = ({
                 direction={sortDirection}
                 onClick={() => onSort("last_name")}
               >
-                Last Name
+                {t("Last Name")}
               </TableSortLabel>
             </TableCell>
             <TableCell>
@@ -65,7 +67,7 @@ export const UsersTable = ({
                 direction={sortDirection}
                 onClick={() => onSort("email")}
               >
-                Email
+                {t("Email")}
               </TableSortLabel>
             </TableCell>
             <TableCell>
@@ -74,7 +76,7 @@ export const UsersTable = ({
                 direction={sortDirection}
                 onClick={() => onSort("department")}
               >
-                Department
+                {t("Department")}
               </TableSortLabel>
             </TableCell>
             <TableCell>
@@ -83,7 +85,7 @@ export const UsersTable = ({
                 direction={sortDirection}
                 onClick={() => onSort("position")}
               >
-                Position
+                {t("Position")}
               </TableSortLabel>
             </TableCell>
             <TableCell />

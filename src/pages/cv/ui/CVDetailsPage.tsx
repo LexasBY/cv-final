@@ -7,6 +7,8 @@ import {
   FormHelperText,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+
 import { useCvContext } from "../model/useCvContext";
 import { useUpdateCv } from "../model/useCv";
 
@@ -17,6 +19,7 @@ type FormValues = {
 };
 
 export const CVDetailsPage: React.FC = () => {
+  const { t } = useTranslation();
   const { cv, refetch } = useCvContext();
   const { updateCv } = useUpdateCv();
 
@@ -60,10 +63,14 @@ export const CVDetailsPage: React.FC = () => {
         <Controller
           name="name"
           control={control}
-          rules={{ required: "Name is required" }}
+          rules={{ required: t("Name is required") }}
           render={({ field, fieldState }) => (
             <>
-              <TextField {...field} label="Name" error={!!fieldState.error} />
+              <TextField
+                {...field}
+                label={t("Name")}
+                error={!!fieldState.error}
+              />
               {fieldState.error && (
                 <FormHelperText error>
                   {fieldState.error.message}
@@ -78,7 +85,9 @@ export const CVDetailsPage: React.FC = () => {
         <Controller
           name="education"
           control={control}
-          render={({ field }) => <TextField {...field} label="Education" />}
+          render={({ field }) => (
+            <TextField {...field} label={t("Education")} />
+          )}
         />
       </FormControl>
 
@@ -87,7 +96,12 @@ export const CVDetailsPage: React.FC = () => {
           name="description"
           control={control}
           render={({ field }) => (
-            <TextField {...field} label="Description" multiline minRows={5} />
+            <TextField
+              {...field}
+              label={t("Description")}
+              multiline
+              minRows={5}
+            />
           )}
         />
       </FormControl>
@@ -105,7 +119,7 @@ export const CVDetailsPage: React.FC = () => {
             "&:hover": { backgroundColor: "error.dark" },
           }}
         >
-          Update
+          {t("Update")}
         </Button>
       </Box>
     </Box>

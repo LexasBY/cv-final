@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Typography,
@@ -13,13 +13,14 @@ type Language = "en" | "de" | "ru";
 
 export const SettingsPage = () => {
   const { mode, setMode } = useThemeMode();
-  const [language, setLanguage] = useState<Language>("en");
+  const { i18n, t } = useTranslation();
+  const currentLang = i18n.language as Language;
 
   return (
     <>
       <Box sx={{ px: 4, pt: 3 }}>
         <Typography variant="h6" sx={{ color: "text.secondary" }}>
-          Settings
+          {t("Settings")}
         </Typography>
       </Box>
 
@@ -38,22 +39,22 @@ export const SettingsPage = () => {
         <FormControl fullWidth>
           <TextField
             select
-            label="Appearance"
+            label={t("Appearance")}
             value={mode}
             onChange={(e) => setMode(e.target.value as ThemeMode)}
           >
-            <MenuItem value="system">Device settings</MenuItem>
-            <MenuItem value="light">Light</MenuItem>
-            <MenuItem value="dark">Dark</MenuItem>
+            <MenuItem value="system">{t("Device settings")}</MenuItem>
+            <MenuItem value="light">{t("Light")}</MenuItem>
+            <MenuItem value="dark">{t("Dark")}</MenuItem>
           </TextField>
         </FormControl>
 
         <FormControl fullWidth>
           <TextField
             select
-            label="Language"
-            value={language}
-            onChange={(e) => setLanguage(e.target.value as Language)}
+            label={t("Language")}
+            value={currentLang}
+            onChange={(e) => i18n.changeLanguage(e.target.value)}
           >
             <MenuItem value="en">English</MenuItem>
             <MenuItem value="de">Deutsch</MenuItem>
