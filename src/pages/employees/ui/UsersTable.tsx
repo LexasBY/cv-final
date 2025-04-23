@@ -36,7 +36,7 @@ export const UsersTable = ({
   const theme = useTheme();
 
   return (
-    <TableContainer component={Paper} sx={{ maxHeight: "70vh" }}>
+    <TableContainer component={Paper} sx={{ maxHeight: "80vh" }}>
       <Table stickyHeader>
         <TableHead>
           <TableRow>
