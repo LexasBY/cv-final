@@ -3,6 +3,7 @@ import { Box, Button, Stack } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CancelIcon from "@mui/icons-material/Cancel";
+import { useTranslation } from "react-i18next";
 
 type CvSkillsActionsProps = {
   hasSkills: boolean;
@@ -23,6 +24,8 @@ export const CvSkillsActions: React.FC<CvSkillsActionsProps> = ({
   onDeleteCancel,
   onDeleteConfirm,
 }) => {
+  const { t } = useTranslation();
+
   if (isDeleteMode) {
     return (
       <Box display="flex" justifyContent="flex-end" mt={2}>
@@ -41,7 +44,7 @@ export const CvSkillsActions: React.FC<CvSkillsActionsProps> = ({
               },
             }}
           >
-            CANCEL
+            {t("Cancel")}
           </Button>
 
           <Button
@@ -59,7 +62,7 @@ export const CvSkillsActions: React.FC<CvSkillsActionsProps> = ({
               gap: 1,
             }}
           >
-            DELETE
+            {t("Delete")}
             {deleteCount > 0 && (
               <Box
                 sx={{
@@ -93,7 +96,7 @@ export const CvSkillsActions: React.FC<CvSkillsActionsProps> = ({
           onClick={onAdd}
           sx={{ color: "gray", borderRadius: 5 }}
         >
-          ADD SKILL
+          {t("Add Skill")}
         </Button>
         {hasSkills && (
           <Button
@@ -101,7 +104,7 @@ export const CvSkillsActions: React.FC<CvSkillsActionsProps> = ({
             onClick={onRemove}
             sx={{ color: "red", borderRadius: 5 }}
           >
-            REMOVE SKILLS
+            {t("Remove Skills")}
           </Button>
         )}
       </Stack>

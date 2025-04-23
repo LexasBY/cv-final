@@ -9,6 +9,7 @@ import {
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { useTranslation } from "react-i18next";
 
 type CreateCvModalProps = {
   open: boolean;
@@ -25,6 +26,7 @@ export const CreateCvModal: React.FC<CreateCvModalProps> = ({
   onClose,
   onSubmit,
 }) => {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [education, setEducation] = useState("");
   const [description, setDescription] = useState("");
@@ -32,7 +34,7 @@ export const CreateCvModal: React.FC<CreateCvModalProps> = ({
 
   const handleSubmit = () => {
     if (!name.trim()) {
-      setError("Name is required");
+      setError(t("Name is required"));
       return;
     }
     setError("");
@@ -51,7 +53,7 @@ export const CreateCvModal: React.FC<CreateCvModalProps> = ({
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <DialogTitle sx={{ display: "flex", justifyContent: "space-between" }}>
-        Create CV
+        {t("Create CV")}
         <IconButton onClick={handleClose} size="small">
           <CloseIcon />
         </IconButton>
@@ -59,7 +61,7 @@ export const CreateCvModal: React.FC<CreateCvModalProps> = ({
 
       <DialogContent>
         <TextField
-          label="Name"
+          label={t("Name")}
           value={name}
           onChange={(e) => setName(e.target.value)}
           fullWidth
@@ -69,14 +71,14 @@ export const CreateCvModal: React.FC<CreateCvModalProps> = ({
           helperText={error}
         />
         <TextField
-          label="Education"
+          label={t("Education")}
           value={education}
           onChange={(e) => setEducation(e.target.value)}
           fullWidth
           margin="normal"
         />
         <TextField
-          label="Description"
+          label={t("Description")}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           fullWidth
@@ -92,7 +94,7 @@ export const CreateCvModal: React.FC<CreateCvModalProps> = ({
           variant="outlined"
           sx={{ borderRadius: "30px", px: 4 }}
         >
-          Cancel
+          {t("Cancel")}
         </Button>
         <Button
           onClick={handleSubmit}
@@ -108,7 +110,7 @@ export const CreateCvModal: React.FC<CreateCvModalProps> = ({
             },
           }}
         >
-          Create
+          {t("Create")}
         </Button>
       </DialogActions>
     </Dialog>

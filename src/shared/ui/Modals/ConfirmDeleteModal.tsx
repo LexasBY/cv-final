@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { useTranslation } from "react-i18next";
 
 type EntityType = "cv" | "project";
 
@@ -27,7 +28,10 @@ export const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
   entityType,
   entityName,
 }) => {
-  const getTitle = () => (entityType === "cv" ? "Delete CV" : "Remove project");
+  const { t } = useTranslation();
+
+  const getTitle = () =>
+    entityType === "cv" ? t("Delete CV") : t("Remove project");
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
@@ -40,9 +44,11 @@ export const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
 
       <DialogContent>
         <Typography>
-          Are you sure you want to{" "}
-          {entityType === "cv" ? "delete CV" : "remove project"}{" "}
-          <strong>{entityName}</strong>?
+          {entityType === "cv"
+            ? t("Are you sure you want to delete CV", { name: entityName })
+            : t("Are you sure you want to remove project", {
+                name: entityName,
+              })}
         </Typography>
       </DialogContent>
 
@@ -52,7 +58,7 @@ export const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
           variant="outlined"
           sx={{ borderRadius: "30px", px: 4 }}
         >
-          Cancel
+          {t("Cancel")}
         </Button>
         <Button
           onClick={onConfirm}
@@ -67,7 +73,7 @@ export const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
             },
           }}
         >
-          Confirm
+          {t("Confirm")}
         </Button>
       </DialogActions>
     </Dialog>

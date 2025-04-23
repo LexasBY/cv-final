@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import { useTranslation } from "react-i18next";
 
 import { SearchInput } from "../../../shared/ui/SearchInput";
 import { useCvContext } from "../../../pages/cv/model/useCvContext";
@@ -22,6 +23,7 @@ import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 import { useUpdateCvProject } from "../model/useUpdateCvProject";
 
 export const CVProjectsPage: React.FC = () => {
+  const { t } = useTranslation();
   const { cv, refetch, setCv } = useCvContext();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -106,7 +108,7 @@ export const CVProjectsPage: React.FC = () => {
         });
         setSnackbar({
           open: true,
-          message: "Project successfully updated!",
+          message: t("Project successfully updated!"),
           severity: "success",
         });
       } else {
@@ -124,7 +126,7 @@ export const CVProjectsPage: React.FC = () => {
         });
         setSnackbar({
           open: true,
-          message: "Project successfully added!",
+          message: t("Project successfully added!"),
           severity: "success",
         });
       }
@@ -136,8 +138,8 @@ export const CVProjectsPage: React.FC = () => {
       setSnackbar({
         open: true,
         message: editingProject
-          ? "Failed to update project"
-          : "Failed to add project",
+          ? t("Failed to update project")
+          : t("Failed to add project"),
         severity: "error",
       });
     }
@@ -175,13 +177,13 @@ export const CVProjectsPage: React.FC = () => {
       setDeletingProject(null);
       setSnackbar({
         open: true,
-        message: "Project removed successfully",
+        message: t("Project removed successfully"),
         severity: "success",
       });
     } catch {
       setSnackbar({
         open: true,
-        message: "Failed to remove project",
+        message: t("Failed to remove project"),
         severity: "error",
       });
     }
@@ -229,7 +231,7 @@ export const CVProjectsPage: React.FC = () => {
   if (errorProjects)
     return (
       <Box sx={{ p: 3 }}>
-        <Typography color="error">Failed to load projects</Typography>
+        <Typography color="error">{t("Failed to load projects")}</Typography>
       </Box>
     );
 
@@ -263,7 +265,7 @@ export const CVProjectsPage: React.FC = () => {
             }}
             startIcon={<AddIcon />}
           >
-            Add Project
+            {t("Add Project")}
           </Button>
         </Box>
 
@@ -295,8 +297,10 @@ export const CVProjectsPage: React.FC = () => {
         open={!!deletingProject}
         onClose={() => setDeletingProject(null)}
         onConfirm={handleDeleteConfirm}
-        title="Remove Project"
-        description={`Are you sure you want to remove project "${deletingProject?.name}"?`}
+        title={t("Remove project")}
+        description={t("Are you sure you want to remove project {{name}}?", {
+          name: deletingProject?.name ?? "",
+        })}
       />
 
       <Snackbar

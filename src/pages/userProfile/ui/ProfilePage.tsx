@@ -21,11 +21,12 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-
+import { useTranslation } from "react-i18next";
 import { useUserProfile } from "../model/useUserProfile";
 import { AvatarDropzone } from "../model/AvatarDropzone";
 
 export const ProfilePage: React.FC = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const { userId } = useParams();
@@ -77,7 +78,7 @@ export const ProfilePage: React.FC = () => {
     );
   }
 
-  if (error || !user) return <Box>Error fetching user</Box>;
+  if (error || !user) return <Box>{t("Error fetching user")}</Box>;
 
   const joinedDate = new Date(parseInt(user.created_at, 10)).toDateString();
   const canUpdate = isEditable && hasChanges;
@@ -95,7 +96,7 @@ export const ProfilePage: React.FC = () => {
           to="/users"
           sx={{ textDecoration: "none", color: "text.primary" }}
         >
-          Employees
+          {t("Employees")}
         </Typography>
         <Typography variant="body2" color="text.secondary">
           <ChevronRight />
@@ -115,7 +116,7 @@ export const ProfilePage: React.FC = () => {
               variant="body2"
               sx={{ fontWeight: "bold", color: "text.primary" }}
             >
-              {currentTab === 1 ? "Skills" : "Languages"}
+              {currentTab === 1 ? t("Skills") : t("Languages")}
             </Typography>
           </>
         )}
@@ -123,9 +124,9 @@ export const ProfilePage: React.FC = () => {
 
       <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
         <Tabs value={currentTab} onChange={handleTabChange}>
-          <Tab label="PROFILE" />
-          <Tab label="SKILLS" />
-          <Tab label="LANGUAGES" />
+          <Tab label={t("Profile")} />
+          <Tab label={t("Skills")} />
+          <Tab label={t("Languages")} />
         </Tabs>
       </Box>
 
@@ -156,14 +157,14 @@ export const ProfilePage: React.FC = () => {
             sx={{ mt: 1 }}
             align="center"
           >
-            A member since {joinedDate}
+            {t("A member since")} {joinedDate}
           </Typography>
 
           <Box sx={{ maxWidth: 900, mx: "auto", mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  label="First Name"
+                  label={t("First Name")}
                   variant="outlined"
                   fullWidth
                   disabled={!isEditable}
@@ -173,7 +174,7 @@ export const ProfilePage: React.FC = () => {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  label="Last Name"
+                  label={t("Last Name")}
                   variant="outlined"
                   fullWidth
                   disabled={!isEditable}
@@ -184,16 +185,16 @@ export const ProfilePage: React.FC = () => {
               <Grid item xs={12} sm={6}>
                 {isEditable ? (
                   <FormControl fullWidth>
-                    <InputLabel>Department</InputLabel>
+                    <InputLabel>{t("Department")}</InputLabel>
                     <Select
-                      label="Department"
+                      label={t("Department")}
                       value={displayDepartment}
                       onChange={(e) =>
                         setDepartmentId(e.target.value as string)
                       }
                     >
                       <MenuItem value="" disabled hidden>
-                        Select Department
+                        {t("Select Department")}
                       </MenuItem>
                       {departments.map((dept) => (
                         <MenuItem key={dept.id} value={dept.id}>
@@ -204,7 +205,7 @@ export const ProfilePage: React.FC = () => {
                   </FormControl>
                 ) : (
                   <TextField
-                    label="Department"
+                    label={t("Department")}
                     variant="outlined"
                     fullWidth
                     disabled
@@ -215,14 +216,14 @@ export const ProfilePage: React.FC = () => {
               <Grid item xs={12} sm={6}>
                 {isEditable ? (
                   <FormControl fullWidth>
-                    <InputLabel>Position</InputLabel>
+                    <InputLabel>{t("Position")}</InputLabel>
                     <Select
-                      label="Position"
+                      label={t("Position")}
                       value={displayPosition}
                       onChange={(e) => setPositionId(e.target.value as string)}
                     >
                       <MenuItem value="" disabled hidden>
-                        Select Position
+                        {t("Select Position")}
                       </MenuItem>
                       {positions.map((pos) => (
                         <MenuItem key={pos.id} value={pos.id}>
@@ -233,7 +234,7 @@ export const ProfilePage: React.FC = () => {
                   </FormControl>
                 ) : (
                   <TextField
-                    label="Position"
+                    label={t("Position")}
                     variant="outlined"
                     fullWidth
                     disabled
@@ -251,7 +252,7 @@ export const ProfilePage: React.FC = () => {
                   onClick={handleUpdate}
                   sx={{ borderRadius: "20px", px: 4 }}
                 >
-                  UPDATE
+                  {t("Update")}
                 </Button>
               </Box>
             )}

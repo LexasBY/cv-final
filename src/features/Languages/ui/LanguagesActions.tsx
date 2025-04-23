@@ -3,6 +3,7 @@ import { Box, Button, Stack } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CancelIcon from "@mui/icons-material/Cancel";
+import { useTranslation } from "react-i18next";
 
 type LanguagesActionsProps = {
   hasLanguages: boolean;
@@ -23,6 +24,8 @@ export const LanguagesActions: React.FC<LanguagesActionsProps> = ({
   onDeleteCancel,
   onDeleteConfirm,
 }) => {
+  const { t } = useTranslation();
+
   if (isDeleteMode) {
     return (
       <Box display="flex" justifyContent="flex-end" mt={2}>
@@ -41,7 +44,7 @@ export const LanguagesActions: React.FC<LanguagesActionsProps> = ({
               },
             }}
           >
-            CANCEL
+            {t("Cancel")}
           </Button>
 
           <Button
@@ -58,7 +61,7 @@ export const LanguagesActions: React.FC<LanguagesActionsProps> = ({
               gap: 1,
             }}
           >
-            DELETE
+            {t("Delete")}
             {deleteCount > 0 && (
               <Box
                 sx={{
@@ -92,7 +95,7 @@ export const LanguagesActions: React.FC<LanguagesActionsProps> = ({
           onClick={onAdd}
           sx={{ color: "gray", borderRadius: 5 }}
         >
-          ADD LANGUAGE
+          {t("Add Language")}
         </Button>
         {hasLanguages && (
           <Button
@@ -100,7 +103,7 @@ export const LanguagesActions: React.FC<LanguagesActionsProps> = ({
             onClick={onRemove}
             sx={{ color: "red", borderRadius: 5 }}
           >
-            REMOVE LANGUAGES
+            {t("Remove Languages")}
           </Button>
         )}
       </Stack>

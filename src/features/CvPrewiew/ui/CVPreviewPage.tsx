@@ -11,6 +11,7 @@ import {
   TableCell,
   TableBody,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import { useCvContext } from "../../../pages/cv/model/useCvContext";
 import { Mastery, Proficiency } from "../../../shared/api/graphql/generated";
 import { groupSkillsByParentCategory } from "../../../shared/lib/skills/groupSkillsByParent";
@@ -19,6 +20,7 @@ import { useExportPdf } from "../model/useExportPdf";
 import { prepareHtml } from "../model/prepareHtml";
 
 export const CVPreviewPage: React.FC = () => {
+  const { t } = useTranslation();
   const { cv, skillCategories } = useCvContext();
   const { exportPdf } = useExportPdf();
   const contentRef = useRef<HTMLDivElement>(null);
@@ -26,7 +28,7 @@ export const CVPreviewPage: React.FC = () => {
   if (!cv) {
     return (
       <Box sx={{ p: 4 }}>
-        <Typography color="error">CV not found</Typography>
+        <Typography color="error">{t("CV not found")}</Typography>
       </Box>
     );
   }
@@ -47,7 +49,6 @@ export const CVPreviewPage: React.FC = () => {
     if (!contentRef.current) return;
 
     const html = prepareHtml(contentRef.current);
-
     try {
       const base64pdf = await exportPdf(html);
       if (base64pdf) {
@@ -67,7 +68,7 @@ export const CVPreviewPage: React.FC = () => {
     <Box sx={{ p: 4, maxWidth: 1200, mx: "auto", fontSize: "1.2rem" }}>
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
         <Button variant="outlined" color="error" onClick={handleExport}>
-          EXPORT PDF
+          {t("Export PDF")}
         </Button>
       </Box>
 
@@ -84,12 +85,12 @@ export const CVPreviewPage: React.FC = () => {
         <Grid container spacing={4}>
           <Grid item xs={12} md={6}>
             <Typography variant="h6" fontWeight="bold" gutterBottom>
-              Education
+              {t("Education")}
             </Typography>
             <Typography paragraph>{cv.education || "—"}</Typography>
 
             <Typography variant="h6" fontWeight="bold" gutterBottom>
-              Language proficiency
+              {t("Language proficiency")}
             </Typography>
             {languages.map((lang) => (
               <Typography key={lang.name}>
@@ -99,7 +100,7 @@ export const CVPreviewPage: React.FC = () => {
 
             <Box mt={2}>
               <Typography variant="h6" fontWeight="bold" gutterBottom>
-                Domains
+                {t("Domains")}
               </Typography>
               <Typography>
                 {uniqueDomains.length > 0 ? uniqueDomains.join(", ") : "—"}
@@ -114,7 +115,7 @@ export const CVPreviewPage: React.FC = () => {
             <Typography paragraph>{cv.description}</Typography>
 
             <Typography variant="h6" fontWeight="bold" gutterBottom>
-              Skills
+              {t("Skills")}
             </Typography>
             {Object.entries(groupedSkills).map(([category, list]) => (
               <Box key={category} sx={{ mb: 1 }}>
@@ -131,7 +132,7 @@ export const CVPreviewPage: React.FC = () => {
 
         <Divider sx={{ my: 4 }} />
         <Typography variant="h5" gutterBottom>
-          Projects
+          {t("Projects")}
         </Typography>
         {projects.map((proj) => (
           <Box key={proj.id} sx={{ mb: 4 }}>
@@ -145,20 +146,24 @@ export const CVPreviewPage: React.FC = () => {
               <Grid item xs={12} md={6}>
                 {proj.roles?.length > 0 && (
                   <Box mb={1}>
-                    <Typography fontWeight="bold">Project roles</Typography>
+                    <Typography fontWeight="bold">
+                      {t("Project roles")}
+                    </Typography>
                     <Typography>{proj.roles.join(", ")}</Typography>
                   </Box>
                 )}
                 <Box mb={1}>
-                  <Typography fontWeight="bold">Period</Typography>
+                  <Typography fontWeight="bold">{t("Period")}</Typography>
                   <Typography>
                     {proj.start_date?.slice(0, 7)} –{" "}
-                    {proj.end_date?.slice(0, 7) || "Till now"}
+                    {proj.end_date?.slice(0, 7) || t("Till now")}
                   </Typography>
                 </Box>
                 {proj.responsibilities?.length > 0 && (
                   <Box mb={1}>
-                    <Typography fontWeight="bold">Responsibilities</Typography>
+                    <Typography fontWeight="bold">
+                      {t("Responsibilities")}
+                    </Typography>
                     <ul style={{ margin: 0, paddingLeft: "1rem" }}>
                       {proj.responsibilities.map((r, i) => (
                         <li key={i}>
@@ -170,7 +175,9 @@ export const CVPreviewPage: React.FC = () => {
                 )}
                 {proj.environment?.length > 0 && (
                   <Box>
-                    <Typography fontWeight="bold">Environment</Typography>
+                    <Typography fontWeight="bold">
+                      {t("Environment")}
+                    </Typography>
                     <Typography>{proj.environment.join(", ")}</Typography>
                   </Box>
                 )}
@@ -181,17 +188,19 @@ export const CVPreviewPage: React.FC = () => {
 
         <Divider sx={{ my: 4 }} />
         <Typography variant="h5" gutterBottom>
-          Professional skills
+          {t("Professional skills")}
         </Typography>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: "bold" }}>SKILLS</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>{t("Skills")}</TableCell>
               <TableCell />
               <TableCell sx={{ fontWeight: "bold" }}>
-                EXPERIENCE IN YEARS
+                {t("Experience in years")}
               </TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>LAST USED</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>
+                {t("Last used")}
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

@@ -10,6 +10,7 @@ import {
   InputLabel,
   FormControl,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 type Option = {
   label: string;
@@ -43,6 +44,7 @@ export const GenericModal: React.FC<GenericModalProps> = ({
   initialLevel = levels[0]?.value || "",
   disableItemSelect = false,
 }) => {
+  const { t } = useTranslation();
   const [selectedItem, setSelectedItem] = useState(initialItemValue);
   const [selectedLevel, setSelectedLevel] = useState(initialLevel);
 
@@ -59,35 +61,35 @@ export const GenericModal: React.FC<GenericModalProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>{title}</DialogTitle>
+      <DialogTitle>{t(title)}</DialogTitle>
       <DialogContent
         sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 2 }}
       >
         <FormControl fullWidth disabled={disableItemSelect}>
-          <InputLabel>{itemLabel}</InputLabel>
+          <InputLabel>{t(itemLabel)}</InputLabel>
           <Select
             value={selectedItem}
-            label={itemLabel}
+            label={t(itemLabel)}
             onChange={(e) => setSelectedItem(e.target.value)}
           >
             {options.map((opt) => (
               <MenuItem key={opt.value} value={opt.value}>
-                {opt.label}
+                {t(opt.label)}
               </MenuItem>
             ))}
           </Select>
         </FormControl>
 
         <FormControl fullWidth>
-          <InputLabel>{levelLabel}</InputLabel>
+          <InputLabel>{t(levelLabel)}</InputLabel>
           <Select
             value={selectedLevel}
-            label={levelLabel}
+            label={t(levelLabel)}
             onChange={(e) => setSelectedLevel(e.target.value)}
           >
             {levels.map((level) => (
               <MenuItem key={level.value} value={level.value}>
-                {level.label}
+                {t(level.label)}
               </MenuItem>
             ))}
           </Select>
@@ -96,14 +98,14 @@ export const GenericModal: React.FC<GenericModalProps> = ({
 
       <DialogActions sx={{ px: 3, pb: 2 }}>
         <Button onClick={onClose} variant="outlined" color="inherit">
-          Cancel
+          {t("Cancel")}
         </Button>
         <Button
           onClick={handleConfirm}
           variant="contained"
           disabled={!selectedItem}
         >
-          Confirm
+          {t("Confirm")}
         </Button>
       </DialogActions>
     </Dialog>

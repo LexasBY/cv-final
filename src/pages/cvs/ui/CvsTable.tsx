@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Cv } from "../../../shared/api/graphql/generated";
+import { useTranslation } from "react-i18next";
 
 type SortColumn = "name" | "education" | "employee";
 
@@ -31,6 +32,8 @@ export const CvsTable: React.FC<CvsTableProps> = ({
   onSort,
   onMenuOpen,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <TableContainer
       component={Paper}
@@ -45,7 +48,7 @@ export const CvsTable: React.FC<CvsTableProps> = ({
                 direction={sortDirection}
                 onClick={() => onSort("name")}
               >
-                Name
+                {t("Name")}
               </TableSortLabel>
             </TableCell>
             <TableCell>
@@ -54,7 +57,7 @@ export const CvsTable: React.FC<CvsTableProps> = ({
                 direction={sortDirection}
                 onClick={() => onSort("education")}
               >
-                Education
+                {t("Education")}
               </TableSortLabel>
             </TableCell>
             <TableCell>
@@ -63,7 +66,7 @@ export const CvsTable: React.FC<CvsTableProps> = ({
                 direction={sortDirection}
                 onClick={() => onSort("employee")}
               >
-                Employee
+                {t("Employee")}
               </TableSortLabel>
             </TableCell>
             <TableCell />

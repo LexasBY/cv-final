@@ -12,6 +12,7 @@ import {
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { Project } from "../../../shared/api/graphql/generated";
+import { useTranslation } from "react-i18next";
 
 export type EditingProject = {
   cvProjectId: string;
@@ -47,6 +48,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
   projects,
   editingProject,
 }) => {
+  const { t } = useTranslation();
   const [projectId, setProjectId] = useState("");
   const [responsibilities, setResponsibilities] = useState("");
   const [roles, setRoles] = useState("");
@@ -97,7 +99,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
       <DialogTitle>
-        {editingProject ? "Update Project" : "Add Project"}
+        {editingProject ? t("Update Project") : t("Add Project")}
       </DialogTitle>
       <DialogContent sx={{ mt: 1 }}>
         <Grid container spacing={2} sx={{ mb: 2 }}>
@@ -105,7 +107,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
             {editingProject ? (
               <TextField
                 fullWidth
-                label="Project"
+                label={t("Project")}
                 value={editingProject.name}
                 disabled
               />
@@ -113,7 +115,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
               <TextField
                 fullWidth
                 select
-                label="Project"
+                label={t("Project")}
                 value={projectId}
                 onChange={(e) => setProjectId(e.target.value)}
               >
@@ -128,7 +130,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
           <Grid item xs={6}>
             <TextField
               fullWidth
-              label="Domain"
+              label={t("Domain")}
               value={
                 editingProject?.domain ||
                 projects.find((p) => p.id === projectId)?.domain ||
@@ -141,7 +143,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
         <Grid container spacing={2} sx={{ mb: 2 }}>
           <Grid item xs={6}>
             <DatePicker
-              label="Start Date"
+              label={t("Start Date")}
               value={startDate}
               onChange={(val) => setStartDate(val)}
               format="DD/MM/YYYY"
@@ -150,7 +152,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
           </Grid>
           <Grid item xs={6}>
             <DatePicker
-              label="End Date"
+              label={t("End Date")}
               value={endDate}
               onChange={(val) => setEndDate(val)}
               format="DD/MM/YYYY"
@@ -160,7 +162,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
         </Grid>
         <TextField
           fullWidth
-          label="Description"
+          label={t("Description")}
           multiline
           disabled
           sx={{ mb: 2 }}
@@ -172,7 +174,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
         />
         <TextField
           fullWidth
-          label="Environment"
+          label={t("Environment")}
           multiline
           disabled
           sx={{ mb: 2 }}
@@ -186,7 +188,7 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
           fullWidth
           multiline
           rows={3}
-          label="Responsibilities"
+          label={t("Responsibilities")}
           value={responsibilities}
           onChange={(e) => setResponsibilities(e.target.value)}
           sx={{ mb: 2 }}
@@ -195,16 +197,16 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
           fullWidth
           multiline
           rows={3}
-          label="Roles"
+          label={t("Roles")}
           value={roles}
           onChange={(e) => setRoles(e.target.value)}
           sx={{ mb: 2 }}
         />
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onClose}>{t("Cancel")}</Button>
         <Button onClick={handleSubmit} disabled={!isValid} color="error">
-          {editingProject ? "Update" : "Add"}
+          {editingProject ? t("Update") : t("Add")}
         </Button>
       </DialogActions>
     </Dialog>

@@ -1,3 +1,5 @@
+import "../shared/i18n/i18n";
+
 import { BrowserRouter } from "react-router-dom";
 import { Router } from "./router";
 import { ApolloProvider } from "@apollo/client";
