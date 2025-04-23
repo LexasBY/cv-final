@@ -1,4 +1,4 @@
-import { IconButton } from "@mui/material";
+import { IconButton, useTheme } from "@mui/material";
 import { ChevronLeft } from "@mui/icons-material";
 
 interface SidebarToggleProps {
@@ -7,17 +7,18 @@ interface SidebarToggleProps {
 }
 
 export const SidebarToggle = ({ isCollapsed, toggle }: SidebarToggleProps) => {
+  const theme = useTheme();
+
   return (
     <IconButton
       onClick={toggle}
       sx={{
-        color: "white",
-        width: 40,
-        height: 40,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        transition: "transform 0.3s ease-in-out",
+        color: theme.palette.text.primary,
+        width: theme.spacing(5),
+        height: theme.spacing(5),
+        transition: theme.transitions.create("transform", {
+          duration: theme.transitions.duration.standard,
+        }),
         transform: isCollapsed ? "rotate(180deg)" : "rotate(0deg)",
       }}
     >

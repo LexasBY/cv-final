@@ -26,7 +26,7 @@ export const AvatarDropzone: React.FC<Props> = ({
 
   const { getRootProps, getInputProps, open } = useDropzone({
     onDrop,
-    noClick: true, // отключаем автоклик на всю область, чтобы управлять вручную
+    noClick: true,
     multiple: false,
     accept: {
       "image/png": [],
@@ -53,7 +53,11 @@ export const AvatarDropzone: React.FC<Props> = ({
       <Box position="relative" sx={{ width: 120, height: 120 }}>
         <Avatar
           src={avatarUrl || ""}
-          sx={{ width: 120, height: 120, bgcolor: "gray" }}
+          sx={{
+            width: 120,
+            height: 120,
+            bgcolor: avatarUrl ? "transparent" : "text.secondary",
+          }}
         >
           {!avatarUrl && firstName?.charAt(0).toUpperCase()}
         </Avatar>
@@ -62,15 +66,15 @@ export const AvatarDropzone: React.FC<Props> = ({
           <IconButton
             size="small"
             onClick={(e) => {
-              e.stopPropagation(); // не активировать dropzone при удалении
+              e.stopPropagation();
               onRemove();
             }}
             sx={{
               position: "absolute",
               top: -8,
               right: -8,
-              color: "white",
-              "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
+              color: "text.primary",
+              "&:hover": { bgcolor: "action.hover" },
             }}
           >
             <Close fontSize="small" />
@@ -81,17 +85,19 @@ export const AvatarDropzone: React.FC<Props> = ({
       {/* Кнопка загрузки и подписи */}
       {isEditable && (
         <Box>
-          <Box display="flex" alignItems="center" gap={1}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <IconButton
               color="primary"
               onClick={(e) => {
-                e.stopPropagation(); // чтобы клик не активировал drag-n-drop
+                e.stopPropagation();
                 open();
               }}
             >
               <UploadFile />
             </IconButton>
-            <Typography variant="body1">Upload avatar image</Typography>
+            <Typography variant="body1" color="text.primary">
+              Upload avatar image
+            </Typography>
           </Box>
           <Typography variant="body2" color="text.secondary" mt={1}>
             png, jpg or gif no more than 0.5MB
@@ -99,7 +105,6 @@ export const AvatarDropzone: React.FC<Props> = ({
         </Box>
       )}
 
-      {/* input должен быть внутри Dropzone */}
       <input {...getInputProps()} />
     </Box>
   );

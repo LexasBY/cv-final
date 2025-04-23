@@ -15,7 +15,7 @@ export const Sidebar = () => {
     <Box
       component="aside"
       sx={{
-        width: isCollapsed ? 70 : 300,
+        width: isCollapsed ? 70 : 350,
         minHeight: "100vh",
         padding: "32px 0 0 0",
         transition: "width 0.3s ease-in-out",

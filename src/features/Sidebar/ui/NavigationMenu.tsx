@@ -4,6 +4,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  useTheme,
 } from "@mui/material";
 import {
   People,
@@ -24,6 +25,8 @@ const menuItems = [
 ];
 
 export const NavigationMenu = ({ isCollapsed }: NavigationMenuProps) => {
+  const theme = useTheme();
+
   return (
     <List sx={{ flexGrow: 1, py: 0 }}>
       {menuItems.map((item) => (
@@ -31,29 +34,34 @@ export const NavigationMenu = ({ isCollapsed }: NavigationMenuProps) => {
           key={item.path}
           component={NavLink}
           to={item.path}
-          sx={{
+          sx={(theme) => ({
             px: 1.5,
             mb: 2,
             width: "100%",
-            minWidth: isCollapsed ? 70 : 300,
-            color: "rgba(255,255,255,0.8)",
-            borderRadius: "0 24px 24px 0",
+            minWidth: isCollapsed ? theme.spacing(8) : theme.spacing(38),
+            color: theme.palette.text.secondary,
+            borderRadius: `0 ${theme.shape.borderRadius * 3}px ${
+              theme.shape.borderRadius * 3
+            }px 0`,
             overflow: "visible",
-            marginRight: isCollapsed ? -10 : 0,
-
-            transition:
-              "background-color 0.3s ease, color 0.3s ease, border-radius 0.3s ease, margin 0.3s ease",
-
+            mr: isCollapsed ? -1 : 0,
+            transition: theme.transitions.create(
+              ["background-color", "color", "border-radius", "margin"],
+              {
+                duration: theme.transitions.duration.standard,
+              }
+            ),
             "&:hover": {
-              backgroundColor: "rgba(255,255,255,0.05)",
+              backgroundColor: theme.palette.action.hover,
             },
-
             "&.active": {
-              backgroundColor: "rgba(255,255,255,0.1)",
-              color: "#fff",
-              borderRadius: "0 24px 24px 0",
+              backgroundColor: theme.palette.action.selected,
+              color: theme.palette.text.primary,
+              borderRadius: `0 ${theme.shape.borderRadius * 3}px ${
+                theme.shape.borderRadius * 3
+              }px 0`,
             },
-          }}
+          })}
         >
           <ListItemIcon
             sx={{
@@ -69,7 +77,9 @@ export const NavigationMenu = ({ isCollapsed }: NavigationMenuProps) => {
             primary={item.label}
             sx={{
               opacity: isCollapsed ? 0 : 1,
-              transition: "opacity 0.3s ease",
+              transition: theme.transitions.create("opacity", {
+                duration: theme.transitions.duration.standard,
+              }),
               whiteSpace: "nowrap",
               overflow: "hidden",
             }}

@@ -10,12 +10,13 @@ import {
   Avatar,
   IconButton,
   Paper,
+  useTheme,
 } from "@mui/material";
 import { MoreVert, ChevronRight } from "@mui/icons-material";
 import { SortColumn } from "../model/useUsers";
 import { User } from "../../../shared/api/graphql/generated";
 
-type UsersTableProps = {
+export type UsersTableProps = {
   users: User[];
   sortColumn: SortColumn;
   sortDirection: "asc" | "desc";
@@ -32,8 +33,10 @@ export const UsersTable = ({
   onUserClick,
   onMenuOpen,
 }: UsersTableProps) => {
+  const theme = useTheme();
+
   return (
-    <TableContainer sx={{ maxHeight: "70vh" }} component={Paper}>
+    <TableContainer component={Paper} sx={{ maxHeight: "80vh" }}>
       <Table stickyHeader>
         <TableHead>
           <TableRow>
@@ -92,13 +95,18 @@ export const UsersTable = ({
             const userInitials =
               user.profile.first_name?.charAt(0).toUpperCase() ||
               user.email.charAt(0).toUpperCase();
+
             return (
               <TableRow key={user.id}>
                 <TableCell>
                   <Avatar
-                    src={user.profile.avatar || ""}
+                    src={user.profile.avatar || undefined}
                     sx={{
-                      bgcolor: user.profile.avatar ? "transparent" : "gray",
+                      bgcolor: user.profile.avatar
+                        ? "transparent"
+                        : theme.palette.grey[500],
+                      width: theme.spacing(4),
+                      height: theme.spacing(4),
                     }}
                   >
                     {!user.profile.avatar && userInitials}
