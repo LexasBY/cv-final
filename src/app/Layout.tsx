@@ -8,7 +8,7 @@ const Layout = () => {
       sx={{
         display: "flex",
         minHeight: "100vh",
-        backgroundColor: "rgb(53, 53, 53)",
+        bgcolor: "background.default",
       }}
     >
       <Sidebar />

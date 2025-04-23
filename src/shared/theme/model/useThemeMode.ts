@@ -1,4 +1,3 @@
-// shared/theme/useThemeMode.ts
 import { useContext } from "react";
 import { ThemeContext } from "./themeContext";
 

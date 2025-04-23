@@ -4,12 +4,21 @@ export const lightTheme = createTheme({
   palette: {
     mode: "light",
     background: {
-      default: "rgb(241, 233, 233)",
-      paper: "rgb(241, 233, 233)",
+      default: "rgb(214, 211, 211)",
+      paper: "rgb(214, 211, 211)",
     },
     text: {
       primary: "#000",
       secondary: "#333",
+    },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: "none",
+        },
+      },
     },
   },
 });
@@ -24,6 +33,15 @@ export const darkTheme = createTheme({
     text: {
       primary: "#ffffff",
       secondary: "#bdbdbd",
+    },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: "none",
+        },
+      },
     },
   },
 });

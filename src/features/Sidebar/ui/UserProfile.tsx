@@ -1,5 +1,12 @@
-import { useState } from "react";
-import { Box, Avatar, ListItemText, Menu, MenuItem } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Box,
+  Avatar,
+  ListItemText,
+  Menu,
+  MenuItem,
+  useTheme,
+} from "@mui/material";
 import { AccountCircle, Settings, Logout } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { client } from "../../../shared/api/apolloClient";
@@ -17,9 +24,11 @@ export const UserProfile = ({
   isCollapsed,
   avatar,
 }: UserProfileProps) => {
+  const theme = useTheme();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const handleAvatarClick = (event: React.MouseEvent<HTMLDivElement>) => {
+
+  const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -29,7 +38,6 @@ export const UserProfile = ({
   };
 
   const handleLogout = async () => {
-    localStorage.removeItem("access_token");
     localStorage.removeItem("access_token");
     localStorage.removeItem("userId");
     await client.clearStore();
@@ -46,8 +54,8 @@ export const UserProfile = ({
           alignItems: "center",
           width: "100%",
           position: "relative",
-          minHeight: 48,
-          px: 1.5,
+          minHeight: theme.spacing(6),
+          px: theme.spacing(1.5),
         }}
       >
         <Avatar
@@ -55,10 +63,10 @@ export const UserProfile = ({
           onClick={handleAvatarClick}
           sx={{
             cursor: "pointer",
-            bgcolor: avatar ? "transparent" : "grey.800",
-            width: 40,
-            height: 40,
-            mr: 1,
+            bgcolor: avatar ? "transparent" : theme.palette.grey[800],
+            width: theme.spacing(5),
+            height: theme.spacing(5),
+            mr: theme.spacing(1),
           }}
         >
           {!avatar && initial}
@@ -67,10 +75,12 @@ export const UserProfile = ({
         <ListItemText
           primary={userName}
           sx={{
-            color: "white",
+            color: theme.palette.text.primary,
             wordBreak: "break-word",
             opacity: isCollapsed ? 0 : 1,
-            transition: "opacity 0.3s ease",
+            transition: theme.transitions.create("opacity", {
+              duration: theme.transitions.duration.standard,
+            }),
             whiteSpace: "nowrap",
             overflow: "hidden",
           }}
@@ -91,7 +101,7 @@ export const UserProfile = ({
             navigate(`/users/${userId}`);
           }}
         >
-          <AccountCircle sx={{ mr: 1 }} /> Profile
+          <AccountCircle sx={{ mr: theme.spacing(1) }} /> Profile
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -99,7 +109,7 @@ export const UserProfile = ({
             navigate("/settings");
           }}
         >
-          <Settings sx={{ mr: 1 }} /> Settings
+          <Settings sx={{ mr: theme.spacing(1) }} /> Settings
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -107,7 +117,7 @@ export const UserProfile = ({
             handleLogout();
           }}
         >
-          <Logout sx={{ mr: 1 }} /> Logout
+          <Logout sx={{ mr: theme.spacing(1) }} /> Logout
         </MenuItem>
       </Menu>
     </>

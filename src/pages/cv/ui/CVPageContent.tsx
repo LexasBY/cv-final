@@ -1,12 +1,7 @@
 import React from "react";
-import {
-  useLocation,
-  useParams,
-  Outlet,
-  useNavigate,
-  Link,
-} from "react-router-dom";
-import { Box, Tabs, Tab, Typography } from "@mui/material";
+import { useLocation, useParams, Outlet, useNavigate } from "react-router-dom";
+import { Box, Tabs, Tab, Typography, Link as MuiLink } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 import { useCvContext } from "../model/useCvContext";
 
 export const CVPageContent: React.FC = () => {
@@ -15,7 +10,7 @@ export const CVPageContent: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const currentTab = location.pathname.split("/").pop();
+  const currentTab = location.pathname.split("/").pop() || "details";
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: string) => {
     navigate(`/cvs/${cvId}/${newValue}`);
@@ -23,10 +18,21 @@ export const CVPageContent: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold" }}>
-        <Link to="/cvs" style={{ color: "#fff", textDecoration: "none" }}>
+      <Typography
+        variant="h5"
+        sx={{ mb: 2, fontWeight: "bold", color: "text.primary" }}
+      >
+        <MuiLink
+          component={RouterLink}
+          to="/cvs"
+          sx={{
+            color: "inherit",
+            textDecoration: "none",
+            "&:hover": { textDecoration: "underline" },
+          }}
+        >
           CVs
-        </Link>{" "}
+        </MuiLink>{" "}
         &gt; {cv?.name || "—"}
       </Typography>
 
@@ -34,7 +40,8 @@ export const CVPageContent: React.FC = () => {
         value={currentTab}
         onChange={handleTabChange}
         sx={{ mb: 2 }}
-        textColor="inherit"
+        textColor="primary"
+        indicatorColor="primary"
       >
         <Tab label="Details" value="details" />
         <Tab label="Skills" value="skills" />

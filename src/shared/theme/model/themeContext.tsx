@@ -1,6 +1,6 @@
-// shared/theme/themeContext.tsx
 import { createContext, useMemo, useState, useEffect, ReactNode } from "react";
 import { ThemeProvider, CssBaseline, Theme } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { darkTheme, lightTheme } from "../ui/theme";
 
 export type ThemeOption = "light" | "dark" | "system";
@@ -12,29 +12,34 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
-const getSystemTheme = (): ThemeOption => {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-};
-
 export const ThemeModeProvider = ({ children }: { children: ReactNode }) => {
   const [mode, setMode] = useState<ThemeOption>(() => {
-    return (localStorage.getItem("theme") as ThemeOption) || "system";
+    const stored = localStorage.getItem("theme");
+    return stored === "light" || stored === "dark" || stored === "system"
+      ? (stored as ThemeOption)
+      : "system";
   });
 
   useEffect(() => {
     localStorage.setItem("theme", mode);
   }, [mode]);
 
-  const selected = mode === "system" ? getSystemTheme() : mode;
+  const prefersDark = useMediaQuery("(prefers-color-scheme: dark)", {
+    noSsr: true,
+  });
 
-  const theme = useMemo<Theme>(() => {
-    return selected === "dark" ? darkTheme : lightTheme;
-  }, [selected]);
+  const activeMode: "light" | "dark" =
+    mode === "system" ? (prefersDark ? "dark" : "light") : mode;
+
+  const theme: Theme = useMemo(
+    () => (activeMode === "dark" ? darkTheme : lightTheme),
+    [activeMode]
+  );
+
+  const contextValue = useMemo(() => ({ mode, setMode }), [mode]);
 
   return (
-    <ThemeContext.Provider value={{ mode, setMode }}>
+    <ThemeContext.Provider value={contextValue}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         {children}

@@ -65,10 +65,12 @@ export const ProfilePage: React.FC = () => {
   if (loading) {
     return (
       <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="80vh"
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "80vh",
+        }}
       >
         <CircularProgress />
       </Box>
@@ -86,19 +88,22 @@ export const ProfilePage: React.FC = () => {
 
   return (
     <Box sx={{ px: 4, py: 3, mx: "auto" }}>
-      <Box display="flex" alignItems="center" gap={1} mb={2}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
         <Typography
           variant="body2"
           component={Link}
           to="/users"
-          sx={{ textDecoration: "none", color: "inherit" }}
+          sx={{ textDecoration: "none", color: "text.primary" }}
         >
           Employees
         </Typography>
         <Typography variant="body2" color="text.secondary">
           <ChevronRight />
         </Typography>
-        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+        <Typography
+          variant="body2"
+          sx={{ fontWeight: "bold", color: "text.primary" }}
+        >
           {user.profile.first_name} {user.profile.last_name}
         </Typography>
         {currentTab > 0 && (
@@ -106,7 +111,10 @@ export const ProfilePage: React.FC = () => {
             <Typography variant="body2" color="text.secondary">
               <ChevronRight />
             </Typography>
-            <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: "bold", color: "text.primary" }}
+            >
               {currentTab === 1 ? "Skills" : "Languages"}
             </Typography>
           </>
@@ -123,7 +131,7 @@ export const ProfilePage: React.FC = () => {
 
       {currentTab === 0 ? (
         <Box>
-          <Box display="flex" justifyContent="center" mb={4}>
+          <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
             <AvatarDropzone
               avatarUrl={user.profile.avatar}
               firstName={user.profile.first_name}
@@ -133,7 +141,10 @@ export const ProfilePage: React.FC = () => {
             />
           </Box>
 
-          <Typography variant="h5" mt={2} align="center">
+          <Typography
+            variant="h5"
+            sx={{ mt: 2, textAlign: "center", color: "text.primary" }}
+          >
             {user.profile.first_name} {user.profile.last_name}
           </Typography>
           <Typography variant="body1" color="text.secondary" align="center">
@@ -142,13 +153,13 @@ export const ProfilePage: React.FC = () => {
           <Typography
             variant="body1"
             color="text.secondary"
-            mt={1}
+            sx={{ mt: 1 }}
             align="center"
           >
             A member since {joinedDate}
           </Typography>
 
-          <Box maxWidth={900} mx="auto" mt={3}>
+          <Box sx={{ maxWidth: 900, mx: "auto", mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -233,7 +244,7 @@ export const ProfilePage: React.FC = () => {
             </Grid>
 
             {isEditable && (
-              <Box display="flex" justifyContent="flex-end" mt={3}>
+              <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
                 <Button
                   variant="contained"
                   disabled={!canUpdate}
