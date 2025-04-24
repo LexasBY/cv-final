@@ -118,6 +118,6 @@
   "reset_password_success": "Password successfully reset!",
   "reset_password_failed": "Failed to reset password",
   "token_missing_or_invalid": "Invalid or missing token",
-  "auth.password_too_short": "Password must be at least 6 characters",
-  "auth.password_required": "Password is required"
+  "password_too_short": "Password must be at least 6 characters",
+  "password_required": "Password is required"
 }
