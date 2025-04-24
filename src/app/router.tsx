@@ -15,11 +15,15 @@ import { CvSkillsPage } from "../features/CvSkills/ui/CvSkillsPage";
 import { CVProjectsPage } from "../features/CvProjects/ui/CVProjectsPage";
 import { CVPreviewPage } from "../features/CvPrewiew/ui/CVPreviewPage";
 import { SettingsPage } from "../pages/settings/SettingsPage";
+import ForgotPasswordPage from "../pages/auth/ui/ForgotPasswordPage";
+import ResetPasswordPage from "../pages/auth/ui/ResetPasswordPage";
 
 export const Router = () => (
   <Routes>
     <Route path="/auth/login" element={<LoginPage />} />
     <Route path="/auth/signup" element={<RegisterPage />} />
+    <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
+    <Route path="/reset-password" element={<ResetPasswordPage />} />
 
     <Route element={<Layout />}>
       <Route path="/users" element={<UsersPage />} />

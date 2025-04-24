@@ -56,6 +56,18 @@ const REGISTER_MUTATION = gql`
   }
 `;
 
+export const FORGOT_PASSWORD = gql`
+  mutation ForgotPassword($auth: ForgotPasswordInput!) {
+    forgotPassword(auth: $auth)
+  }
+`;
+
+export const RESET_PASSWORD = gql`
+  mutation ResetPassword($auth: ResetPasswordInput!) {
+    resetPassword(auth: $auth)
+  }
+`;
+
 export const useLogin = () =>
   useLazyQuery<{ login: AuthResult }, { auth: AuthInput }>(LOGIN_QUERY);
 
