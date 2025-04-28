@@ -193,15 +193,6 @@ export const AddProjectModal: React.FC<AddProjectModalProps> = ({
           onChange={(e) => setResponsibilities(e.target.value)}
           sx={{ mb: 2 }}
         />
-        <TextField
-          fullWidth
-          multiline
-          rows={3}
-          label={t("Roles")}
-          value={roles}
-          onChange={(e) => setRoles(e.target.value)}
-          sx={{ mb: 2 }}
-        />
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
         <Button onClick={onClose}>{t("Cancel")}</Button>

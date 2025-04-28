@@ -29,6 +29,9 @@ export const NavigationMenu = ({ isCollapsed }: NavigationMenuProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
 
+  const itemHeight = 48;
+  const itemBorderRadius = 24;
+
   return (
     <List sx={{ flexGrow: 1, py: 0 }}>
       {menuItems.map((item) => (
@@ -37,18 +40,24 @@ export const NavigationMenu = ({ isCollapsed }: NavigationMenuProps) => {
           component={NavLink}
           to={item.path}
           sx={{
+            height: itemHeight,
+            minWidth: isCollapsed ? theme.spacing(7) : theme.spacing(35),
+            maxWidth: isCollapsed ? theme.spacing(7) : theme.spacing(35),
             px: 1.5,
             mb: 2,
-            width: "100%",
-            minWidth: isCollapsed ? theme.spacing(8) : theme.spacing(38),
             color: theme.palette.text.secondary,
-            borderRadius: `0 ${theme.shape.borderRadius * 3}px ${
-              theme.shape.borderRadius * 3
-            }px 0`,
-            overflow: "visible",
-            mr: isCollapsed ? -1 : 0,
+            borderRadius: `0 ${itemBorderRadius}px ${itemBorderRadius}px 0`,
+            overflow: "hidden",
+            mx: isCollapsed ? "auto" : 0,
             transition: theme.transitions.create(
-              ["background-color", "color", "border-radius", "margin"],
+              [
+                "min-width",
+                "max-width",
+                "padding",
+                "margin",
+                "color",
+                "background-color",
+              ],
               {
                 duration: theme.transitions.duration.standard,
               }
@@ -59,9 +68,6 @@ export const NavigationMenu = ({ isCollapsed }: NavigationMenuProps) => {
             "&.active": {
               backgroundColor: theme.palette.action.selected,
               color: theme.palette.text.primary,
-              borderRadius: `0 ${theme.shape.borderRadius * 3}px ${
-                theme.shape.borderRadius * 3
-              }px 0`,
             },
           }}
         >
@@ -70,6 +76,9 @@ export const NavigationMenu = ({ isCollapsed }: NavigationMenuProps) => {
               minWidth: 40,
               color: "inherit",
               justifyContent: "center",
+              transition: theme.transitions.create("margin", {
+                duration: theme.transitions.duration.shortest,
+              }),
             }}
           >
             {item.icon}
@@ -79,11 +88,12 @@ export const NavigationMenu = ({ isCollapsed }: NavigationMenuProps) => {
             primary={t(item.key)}
             sx={{
               opacity: isCollapsed ? 0 : 1,
-              transition: theme.transitions.create("opacity", {
-                duration: theme.transitions.duration.standard,
-              }),
               whiteSpace: "nowrap",
               overflow: "hidden",
+              ml: isCollapsed ? 0 : 1.5,
+              transition: theme.transitions.create(["opacity", "margin"], {
+                duration: theme.transitions.duration.shortest,
+              }),
             }}
           />
         </ListItemButton>

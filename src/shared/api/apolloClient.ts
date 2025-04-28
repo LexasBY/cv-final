@@ -15,12 +15,32 @@ const httpLink = createHttpLink({
   uri: "https://cv-project-js.inno.ws/api/graphql",
 });
 
-const authLink = setContext((_, { headers }) => {
+// const authLink = setContext((_, { headers }) => {
+//   const token = getAccessToken();
+//   return {
+//     headers: {
+//       ...headers,
+//       Authorization: token ? `Bearer ${token}` : "",
+//     },
+//   };
+// });
+
+const authLink = setContext((operation, { headers }) => {
+  if (operation.operationName === "ResetPassword") {
+    const urlToken = new URL(window.location.href).searchParams.get("token");
+    return {
+      headers: {
+        ...headers,
+        authorization: `Bearer ${urlToken || ""}`,
+      },
+    };
+  }
+
   const token = getAccessToken();
   return {
     headers: {
       ...headers,
-      Authorization: token ? `Bearer ${token}` : "",
+      authorization: token ? `Bearer ${token}` : "",
     },
   };
 });

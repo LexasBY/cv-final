@@ -15,7 +15,7 @@ export const Sidebar = () => {
     <Box
       component="aside"
       sx={{
-        width: isCollapsed ? 70 : 350,
+        width: isCollapsed ? 90 : 300,
         minHeight: "100vh",
         padding: "32px 0 0 0",
         transition: "width 0.3s ease-in-out",
@@ -24,6 +24,7 @@ export const Sidebar = () => {
         flexDirection: "column",
         alignItems: "flex-start",
         position: "relative",
+        backgroundColor: (theme) => theme.palette.background.paper,
       }}
     >
       <NavigationMenu isCollapsed={isCollapsed} />

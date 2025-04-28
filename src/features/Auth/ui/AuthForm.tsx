@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuthForm } from "../model/useAuthForm";
 import { authSchema } from "../model/validation";
 
@@ -28,6 +29,7 @@ interface AuthFormData {
 
 export const AuthForm = ({ type }: AuthFormProps) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { onSubmit, serverError } = useAuthForm(type);
 
   const {
@@ -58,7 +60,7 @@ export const AuthForm = ({ type }: AuthFormProps) => {
         variant="h4"
         sx={{ mb: 1, fontWeight: "bold", textAlign: "center" }}
       >
-        {type === "login" ? "Welcome back" : "Register now"}
+        {type === "login" ? t("Welcome back") : t("Register now")}
       </Typography>
 
       <Typography
@@ -66,12 +68,12 @@ export const AuthForm = ({ type }: AuthFormProps) => {
         sx={{ mb: 3, color: "gray", textAlign: "center" }}
       >
         {type === "login"
-          ? "Hello again! Log in to continue"
-          : "Welcome! Sign up to continue"}
+          ? t("Hello again! Log in to continue")
+          : t("Welcome! Sign up to continue")}
       </Typography>
 
       <TextField
-        label="Email"
+        label={t("Email")}
         type="email"
         fullWidth
         error={!!errors.email}
@@ -87,10 +89,10 @@ export const AuthForm = ({ type }: AuthFormProps) => {
         error={!!errors.password}
         sx={{ mb: 2 }}
       >
-        <InputLabel htmlFor="password">Password</InputLabel>
+        <InputLabel htmlFor="password">{t("Password")}</InputLabel>
         <OutlinedInput
           id="password"
-          label="Password"
+          label={t("Password")}
           type={showPassword ? "text" : "password"}
           inputProps={{
             autoComplete:
@@ -118,7 +120,7 @@ export const AuthForm = ({ type }: AuthFormProps) => {
         fullWidth
         sx={{ py: 1.5, fontSize: "1rem", fontWeight: "bold", mt: 2 }}
       >
-        {type === "login" ? "LOG IN" : "CREATE ACCOUNT"}
+        {type === "login" ? t("LOG IN") : t("CREATE ACCOUNT")}
       </Button>
 
       {serverError && (
@@ -139,14 +141,10 @@ export const AuthForm = ({ type }: AuthFormProps) => {
           "&:hover": { color: "white" },
         }}
         onClick={() => {
-          if (type === "login") {
-            console.log("Forgot Password clicked");
-          } else {
-            navigate("/auth/login");
-          }
+          navigate(type === "login" ? "/auth/forgot-password" : "/auth/login");
         }}
       >
-        {type === "login" ? "FORGOT PASSWORD" : "I HAVE AN ACCOUNT"}
+        {type === "login" ? t("FORGOT PASSWORD") : t("I HAVE AN ACCOUNT")}
       </Typography>
     </form>
   );

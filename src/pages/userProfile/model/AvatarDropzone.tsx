@@ -34,7 +34,7 @@ export const AvatarDropzone: React.FC<Props> = ({
       "image/jpg": [],
       "image/gif": [],
     },
-    maxSize: 512000, // 0.5MB
+    maxSize: 512000,
   });
 
   return (
@@ -49,7 +49,6 @@ export const AvatarDropzone: React.FC<Props> = ({
         cursor: isEditable ? "pointer" : "default",
       }}
     >
-      {/* Аватар с кнопкой удаления */}
       <Box position="relative" sx={{ width: 120, height: 120 }}>
         <Avatar
           src={avatarUrl || ""}
@@ -82,7 +81,6 @@ export const AvatarDropzone: React.FC<Props> = ({
         )}
       </Box>
 
-      {/* Кнопка загрузки и подписи */}
       {isEditable && (
         <Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
