@@ -119,5 +119,7 @@
   "reset_password_failed": "Zurücksetzen des Passworts fehlgeschlagen",
   "token_missing_or_invalid": "Ungültiges oder fehlendes Token",
   "password_too_short": "Passwort muss mindestens 6 Zeichen lang sein",
-  "password_required": "Passwort ist erforderlich"
+  "password_required": "Passwort ist erforderlich",
+  "User updated successfully": "Benutzer erfolgreich aktualisiert",
+  "Failed to update user": "Benutzer konnte nicht aktualisiert werden"
 }

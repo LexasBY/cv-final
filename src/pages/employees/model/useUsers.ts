@@ -11,7 +11,9 @@ export type SortColumn =
   | "position";
 
 export const useUsers = () => {
-  const { data, loading, error } = useQuery<{ users: User[] }>(GET_USERS);
+  const { data, loading, error, refetch } = useQuery<{ users: User[] }>(
+    GET_USERS
+  );
 
   const [searchTerm, setSearchTerm] = useState("");
   const [sortColumn, setSortColumn] = useState<SortColumn>("email");
@@ -75,5 +77,6 @@ export const useUsers = () => {
     setSortColumn,
     sortDirection,
     setSortDirection,
+    refetchUsers: refetch,
   };
 };

@@ -119,5 +119,7 @@
   "reset_password_failed": "Не удалось изменить пароль",
   "token_missing_or_invalid": "Неверный или отсутствующий токен",
   "password_too_short": "Пароль должен содержать не менее 6 символов",
-  "password_required": "Пароль обязателен"
+  "password_required": "Пароль обязателен",
+  "User updated successfully": "Пользователь успешно обновлён",
+  "Failed to update user": "Не удалось обновить пользователя"
 }
