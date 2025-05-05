@@ -16,7 +16,7 @@ export const Sidebar = () => {
       component="aside"
       sx={{
         width: isCollapsed ? 90 : 300,
-        minHeight: "100vh",
+        height: "100vh",
         padding: "32px 0 0 0",
         transition: "width 0.3s ease-in-out",
         overflow: "hidden",

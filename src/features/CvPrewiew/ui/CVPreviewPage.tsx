@@ -65,7 +65,16 @@ export const CVPreviewPage: React.FC = () => {
   };
 
   return (
-    <Box sx={{ p: 4, maxWidth: 1200, mx: "auto", fontSize: "1.2rem" }}>
+    <Box
+      sx={{
+        p: 4,
+        maxWidth: 1200,
+        mx: "auto",
+        fontSize: "1.2rem",
+        height: "calc(100vh - 210px)",
+        overflowY: "auto",
+      }}
+    >
       <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
         <Button variant="outlined" color="error" onClick={handleExport}>
           {t("Export PDF")}
